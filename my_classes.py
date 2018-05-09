@@ -10,7 +10,7 @@ import keras
 
 class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
-    def __init__(self, list_IDs, labels, batch_size=32, dim=(32,32,32), n_channels=1,
+    def __init__(self, list_IDs, labels, batch_size=32, dim=(32,32), n_channels=1,
                  n_classes=10, shuffle=True):
         'Initialization'
         self.dim = dim
@@ -33,7 +33,6 @@ class DataGenerator(keras.utils.Sequence):
 
         # Find list of IDs
         list_IDs_temp = [self.list_IDs[k] for k in indexes]
-
         # Generate data
         X, y = self.__data_generation(list_IDs_temp)
 
@@ -50,11 +49,13 @@ class DataGenerator(keras.utils.Sequence):
         # Initialization
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
         y = np.empty((self.batch_size), dtype=int)
-
+        
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
             # Store sample
-            X[i,:,:,0] = np.load('data/train_npy/' + ID + '.npy')
+            img = np.load('data/train_npy/' + ID + '.npy')
+            img = img[:,:,np.newaxis]
+            X[i,] = img
             # Store class
             y[i] = self.labels[ID]
 

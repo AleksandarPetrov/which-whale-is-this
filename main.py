@@ -20,6 +20,7 @@ labels_dir = './data/train.csv'
 classes = pd.read_csv(labels_dir)
 list_ids = list(classes.Id)
 file_name = list(classes.Image)
+n_files = len(file_name)
 file_name = [file[:-4] for file in file_name]
 
 # Label encoder, changes the label names to integers for use in generator
@@ -52,5 +53,5 @@ conv_param[1,0], conv_param[1,1] = 4, 15
 dense_param[0] = 1000
 
 # Model generation
-model = gen_model(conv_param,dense_param,in_shape,n_classes)
-model.fit_generator(generator = training_generator, use_multiprocessing=False)
+modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
+modelz.fit_generator(generator = training_generator, use_multiprocessing=False,verbose = 1)

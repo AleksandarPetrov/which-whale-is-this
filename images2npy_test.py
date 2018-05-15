@@ -25,7 +25,7 @@ testFiles = glob.glob (os.path.join(dataDir,"testUniformBW/*.jpg"))
 def gen_npy_data_separate(Files):
     for myFile in Files:
        print(myFile)
-       image = cv2.imread (myFile)
+       image = cv2.imread (myFile,cv2.IMREAD_GRAYSCALE)
        print(myFile)
 	
        ID = myFile.split('/')[-1].split('.')[0]       

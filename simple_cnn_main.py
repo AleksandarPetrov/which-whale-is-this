@@ -5,8 +5,6 @@ Created on Tue May  8 10:00:55 2018
 @author: Kuba
 """
 #from my_classes import DataGenerator
-from my_functions import gen_id_dict
-=======
 from dataGeneratorSimpleCNN import DataGenerator
 from gen_id_dict import gen_id_dict
 from simple_cnn import gen_model
@@ -15,9 +13,9 @@ from numpy import zeros
 import pandas as pd
 
 # Some useful directories
-test_dir = '/data/test_npy'
-train_dir = './data/train_npy'
-labels_dir = './data/train.csv'
+test_dir = '../DATA/test_npy'
+train_dir = '../DATA/train_npy'
+labels_dir = '../DATA/train.csv'
 
 # Reading of labels and corresponding image names
 classes = pd.read_csv(labels_dir)

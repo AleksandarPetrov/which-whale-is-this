@@ -1,0 +1,6 @@
+Epoch 1/3
+ - 46s - loss: 10.5793 - acc: 0.0297
+Epoch 2/3
+ - 45s - loss: 11.2696 - acc: 0.0821
+Epoch 3/3
+ - 45s - loss: 11.0345 - acc: 0.0819

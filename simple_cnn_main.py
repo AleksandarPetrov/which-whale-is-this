@@ -11,6 +11,7 @@ from simple_cnn import gen_model
 from sklearn.preprocessing import LabelEncoder
 from numpy import zeros
 import pandas as pd
+from keras.callbacks import ModelCheckpoint
 
 # Some useful directories
 test_dir = '../DATA/test_npy'

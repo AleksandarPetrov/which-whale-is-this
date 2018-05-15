@@ -53,8 +53,14 @@ conv_param[0,0], conv_param[0,1] = 8, 5
 conv_param[1,0], conv_param[1,1] = 4, 15     
 dense_param[0] = 1000
 
+#Saving callback
+filepath="weights.best.hdf5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+callbacks_list = [checkpoint]
+
 # Model generation
 modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
-modelz.fit_generator(generator = training_generator, use_multiprocessing=True,verbose = 1)
+modelz.fit_generator(generator = training_generator, use_multiprocessing=True,verbose = 1, callbacks=callbacks_list)
 
+# Save final
 modelz.save('simpleCNN.h5')

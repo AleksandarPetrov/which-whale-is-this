@@ -26,6 +26,10 @@ def gen_npy_data_separate(Files):
     for myFile in Files:
        print(myFile)
        image = cv2.imread (myFile)
+       print(np.shape(set(image)))
+       print(image[:,:,0])
+       print(image[:,:,1])
+       print(image[:,:,2])
        print(myFile)
 	
        ID = myFile.split('/')[-1].split('.')[0]       

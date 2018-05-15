@@ -56,3 +56,5 @@ dense_param[0] = 1000
 # Model generation
 modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
 modelz.fit_generator(generator = training_generator, use_multiprocessing=True,verbose = 1)
+
+modelz.save('simpleCNN.h5')

@@ -4,8 +4,13 @@ Created on Tue May  8 10:00:55 2018
 
 @author: Kuba
 """
+<<<<<<< HEAD:main.py
 #from my_classes import DataGenerator
 from my_functions import gen_id_dict
+=======
+from dataGeneratorSimpleCNN import DataGenerator
+from gen_id_dict import gen_id_dict
+>>>>>>> d5656e2c66c5ea046a146e579a14883838bc0a6b:simple_cnn_main.py
 from simple_cnn import gen_model
 from sklearn.preprocessing import LabelEncoder
 from numpy import zeros

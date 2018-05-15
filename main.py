@@ -4,7 +4,7 @@ Created on Tue May  8 10:00:55 2018
 
 @author: Kuba
 """
-from my_classes import DataGenerator
+#from my_classes import DataGenerator
 from my_functions import gen_id_dict
 from simple_cnn import gen_model
 from sklearn.preprocessing import LabelEncoder
@@ -12,7 +12,7 @@ from numpy import zeros
 import pandas as pd
 
 # Some useful directories
-test_dir = './data/test_npy'
+test_dir = '/data/test_npy'
 train_dir = './data/train_npy'
 labels_dir = './data/train.csv'
 

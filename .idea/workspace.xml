@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="74f73e10-a2bc-4f2c-b604-30408e8fdb8d" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gen_id_dict.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dataGeneratorSimpleCNN.py" afterPath="$PROJECT_DIR$/dataGeneratorSimpleCNN.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/simple_cnn_hyperparameterOptimization.py" afterPath="$PROJECT_DIR$/simple_cnn_hyperparameterOptimization.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testAttempt.log" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/simpleCNN.h5" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/simple_cnn_main.py" afterPath="$PROJECT_DIR$/simple_cnn_main.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="simple_cnn_main.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="simple_cnn_main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/simple_cnn_main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="500">
-              <caret line="54" column="21" lean-forward="true" selection-start-line="54" selection-start-column="21" selection-end-line="54" selection-end-column="21" />
+            <state relative-caret-position="543">
+              <caret line="70" column="0" lean-forward="true" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
               <folding>
                 <element signature="e#121#169#0" expanded="true" />
               </folding>
@@ -35,7 +36,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dataGeneratorSimpleCNN.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="dataGeneratorSimpleCNN.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dataGeneratorSimpleCNN.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="528">
@@ -314,21 +315,21 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/simple_cnn_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="54" column="21" lean-forward="true" selection-start-line="54" selection-start-column="21" selection-end-line="54" selection-end-column="21" />
-          <folding>
-            <element signature="e#121#169#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dataGeneratorSimpleCNN.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="528">
           <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/simple_cnn_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="543">
+          <caret line="70" column="0" lean-forward="true" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+          <folding>
+            <element signature="e#121#169#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

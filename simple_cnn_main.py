@@ -11,6 +11,7 @@ from simple_cnn import gen_model
 from sklearn.preprocessing import LabelEncoder
 from numpy import zeros
 import pandas as pd
+from keras.callbacks import ModelCheckpoint
 
 # Some useful directories
 test_dir = '../DATA/test_npy'
@@ -54,8 +55,20 @@ conv_param[0,0], conv_param[0,1] = 8, 5
 conv_param[1,0], conv_param[1,1] = 4, 15     
 dense_param[0] = 1000
 
+#Saving callback
+filepath="../DATA/weights.best.hdf5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+callbacks_list = [checkpoint]
+
 # Model generation
 modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
-modelz.fit_generator(generator = training_generator, verbose = 2)
 
-modelz.save('simpleCNN.h5')
+modelz.fit_generator(generator = training_generator,
+                     use_multiprocessing=True,
+                     epochs=3,
+                     verbose = 2,
+                     callbacks=callbacks_list)
+
+
+# Save final
+modelz.save('../DATA/simpleCNN.h5')

@@ -85,6 +85,12 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr
 #8) dense layer output size   
 #9) optimizer
 #10) no_epochs for training
+
+#params = {'dim': (250,500),
+#          'batch_size': 64,
+#          'n_classes': n_classes,
+#          'n_channels': 1,
+#          'shuffle': True}
     
     
 space = {   'n_conv_layers': hp.uniform('n_conv_layers', 2, 10),
@@ -125,7 +131,7 @@ def gen_model(params):
         #build_fn should construct, compile and return a Keras model, which will then be used to fit/predict
         model.compile(loss='mean_squared_error', optimizer=params['optimizer']) #, metrics='mean_squared_error'
         return model
-    estimator = KerasRegressor(build_fn=getModel,epochs= int(params['nb_epochs']), batch_size= int(params['batch_size']) )
+    estimator = KerasRegressor(build_fn=getModel,epochs= int(params['nb_epochs']), batch_size= int(params['batch_size']), verbose = 1 )
     results = cross_val_score(estimator, trainData, trainLabels, cv=tscv, fit_params={'callbacks': [reduce_lr]})
     mean_cv_score = results.mean()
     if math.isnan(mean_cv_score):

@@ -10,8 +10,10 @@ from gen_imageName_dict import gen_imageName_dict
 from simple_cnn import gen_model
 from sklearn.preprocessing import LabelEncoder
 from numpy import zeros
+from tf_cnnvis import *
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
+
 
 # Some useful directories
 test_dir = '../DATA/test_npy'
@@ -43,8 +45,8 @@ params = {'dim': (250,500),
 
 
 # Generator
-training_generator = DataGenerator(partition['train'], imageName_ID_dict)
-validation_generator = DataGenerator(partition['validation'], imageName_ID_dict)
+training_generator = DataGenerator(partition['train'], imageName_ID_dict, **params)
+validation_generator = DataGenerator(partition['validation'], imageName_ID_dict, **params)
 
 # Network parameters
 conv_param = zeros((2,2))
@@ -66,7 +68,7 @@ modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
 modelz.fit_generator(generator = training_generator,
                      use_multiprocessing=True,
                      epochs=3,
-                     verbose = 2,
+                     verbose = 1,
                      callbacks=callbacks_list)
 
 

@@ -27,6 +27,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 import sys
 import os
+import math
+
+from keras.wrappers.scikit_learn import KerasRegressor
+
+from sklearn.model_selection import cross_val_score
 
 
 ###########################################################
@@ -92,11 +97,11 @@ space = {   'n_conv_layers': hp.uniform('n_conv_layers', 2, 10),
             'optimizer': hp.choice('optimizer',['adadelta','adam','rmsprop','sgd']),
             'nb_epochs' : hp.uniform('nb_epochs', 40, 70),
             'batch_size' : hp.uniform('batch_size', 28,128),           
-            
+            'n_classes': n_classes,
         }
 
 
-def gen_model(params, n_classes):
+def gen_model(params):
     #All conv. filters. of square size
     #conv param: array of size (n_conv,2),(:,0) - n_filters, (:,1) - kernel_dim
     #dense param: array of size (n_dense,1), (:,0) - neurons in dense layers
@@ -114,7 +119,7 @@ def gen_model(params, n_classes):
                                    strides=None, padding='valid', data_format=None))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         model.add(Dense(params['outputDense'], activation=params['activation']))
         model.add(Dropout(0.5))
-        model.add(Dense(n_classes, activation=params['activation']))
+        model.add(Dense(params['n_classes'], activation=params['activation']))
         
     def getModel():
         #build_fn should construct, compile and return a Keras model, which will then be used to fit/predict
@@ -130,39 +135,12 @@ def gen_model(params, n_classes):
     return {'loss': mean_cv_score, 'status': STATUS_OK}    
     
     
-#def gen_cnn(params):   
-#    print ('Params testing: ', params)
-#    model = Sequential()
-#    model.add(Conv2D(units=int(params['units1']), kernel_initializer='normal', activation = params['activation'], input_dim = x_train.shape[1])) 
-#    model.add(Dropout(params['dropout1']))
-#    model.add(Dense(units=int(params['units2']), kernel_initializer='normal', activation = params['activation']))
-#    model.add(Dropout(params['dropout2']))
-#
-#    if params['choice']['layers']== 'three':
-#        model.add(Dense(units=int(params['choice']['units3']), kernel_initializer='normal', activation = params['activation'])) 
-#        model.add(Dropout(params['choice']['dropout3']))    
-#    model.add(Dense(3,kernel_initializer='normal')) # to get the 3 outputs that i need
-#    def getModel():
-#        #build_fn should construct, compile and return a Keras model, which will then be used to fit/predict
-#        model.compile(loss='mean_squared_error', optimizer=params['optimizer']) #, metrics='mean_squared_error'
-#        return model
-#    estimator = KerasRegressor(build_fn=getModel,epochs= int(params['nb_epochs']), batch_size= int(params['batch_size']) )
-################### Added stuff here ###################3333
-#        #model.fit(x_train,y_train, epochs= int(params['nb_epochs']), batch_size= int(params['batch_size']), callbacks=[earlyStopping,reduce_lr,SGDLearningRateTracker()], verbose = 2, shuffle = True, validation_split=0.2)
-#    
-#    results = cross_val_score(estimator, x_train, y_train, cv=tscv, fit_params={'callbacks': [reduce_lr,SGDLearningRateTracker()]})
-#    mean_cv_score = results.mean()
-##    pred_auc =model.predict_proba(x_test, batch_size = 128, verbose = 0)
-##    MSE = mean_squared_error(y_test, pred_auc)
-#    if math.isnan(mean_cv_score):
-#        mean_cv_score = 100000
-#    print('Mean cross-validation score', mean_cv_score)
-#    sys.stdout.flush() 
-#    return {'loss': mean_cv_score, 'status': STATUS_OK}
+
+print(1)
 
 trials = Trials()
 best = fmin(gen_model, space, algo=tpe.suggest, max_evals=15, trials=trials)
-print 'best: '
-print best
+print('best: ')
+print(best)
 np.save('CnnModelHyperparameters.npy',best)
 

@@ -15,7 +15,7 @@ class DataGenerator(keras.utils.Sequence):
         'Initialization'
         self.dim = dim
         self.batch_size = batch_size
-        self.labels = labels
+        self.labels = labels # a dictionary
         self.list_IDs = list_IDs
         self.n_channels = n_channels
         self.n_classes = n_classes
@@ -32,10 +32,11 @@ class DataGenerator(keras.utils.Sequence):
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
 
         # Find list of IDs
-        list_IDs_temp = [self.list_IDs[k] for k in indexes]
-        # Generate data
-        X, y = self.__data_generation(list_IDs_temp)
+        list_imageNames_temp = [self.list_IDs[k] for k in indexes] # list of image filenames
 
+        # Generate data
+        X, y = self.__data_generation(list_imageNames_temp)
+        
         return X, y
 
     def on_epoch_end(self):
@@ -44,14 +45,14 @@ class DataGenerator(keras.utils.Sequence):
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
 
-    def __data_generation(self, list_IDs_temp):
+    def __data_generation(self, list_imageNames_temp):
         'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
         # Initialization
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
         y = np.empty((self.batch_size), dtype=int)
         
         # Generate data
-        for i, ID in enumerate(list_IDs_temp):
+        for i, ID in enumerate(list_imageNames_temp):
             # Store sample
             img = np.load('../DATA/train_npy/' + ID + '.npy')
             img = img[:,:,np.newaxis]

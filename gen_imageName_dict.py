@@ -7,7 +7,8 @@ Created on Tue May  8 09:48:21 2018
 from os import listdir
 from os.path import splitext
 
-def gen_id_dict(test_dir,train_dir):
+
+def gen_imageName_dict(test_dir,train_dir, validation_percentage):
     test_list = listdir(test_dir)
     train_list = listdir(train_dir)
     
@@ -16,7 +17,14 @@ def gen_id_dict(test_dir,train_dir):
     for i,filename in enumerate(train_list):
         train_list[i] = splitext(filename)[0]        
     partition = {}
-    partition['train'] = train_list
+    len_train_list = len(train_list)
+    len_val_set = int(validation_percentage*len_train_list)
+    len_train_set = len_train_list - len_val_set
+    
+    train_set = train_list[0:len_train_set]
+    val_set = train_list[len_train_set:len_train_list]
+    partition['train'] = train_set
+    partition['validation'] = val_set
     partition['test'] = test_list
     
     return partition

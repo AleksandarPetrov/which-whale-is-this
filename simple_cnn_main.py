@@ -15,6 +15,7 @@ from tf_cnnvis import *
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
 from collections import Counter
+import matplotlib.pyplot as plt
 
 TRAIN_TOP_N_WHALES = True
 N = 20
@@ -66,12 +67,12 @@ else:
     imageName_ID_dict = dict(zip(file_names,labels_int))
 
 params = {'dim': (250,500),
-          'batch_size': 64,
+          'batch_size': 32,
           'n_classes': n_classes,
           'n_channels': 1,
           'shuffle': True}
 
-
+print(params['batch_size'])
 # Generator
 training_generator = DataGenerator(partition['train'], imageName_ID_dict, **params)
 validation_generator = DataGenerator(partition['validation'], imageName_ID_dict, **params)
@@ -93,13 +94,33 @@ callbacks_list = [checkpoint]
 # Model generation
 modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
 
-modelz.fit_generator(generator = training_generator,
+history = modelz.fit_generator(generator = training_generator,
                      validation_data=validation_generator,
                      use_multiprocessing=True,
-                     epochs=3,
+                     epochs= 3,
                      verbose = 1,
                      callbacks=callbacks_list)
 
 
 # Save final
 modelz.save('../DATA/simpleCNN.h5')
+
+
+# Plot the training and validation loss and accuracies
+
+#  "Accuracy"
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+plt.show()
+# "Loss"
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+plt.show()

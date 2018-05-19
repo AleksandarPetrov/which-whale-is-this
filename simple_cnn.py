@@ -31,7 +31,7 @@ def gen_model(conv_param,dense_param,in_shape,n_classes):
         for i in range(n_dense):
             model.add(Dense(dense_param[i,0], activation='relu'))
         
-    model.add(Dense(n_classes))
+    model.add(Dense(n_classes, activation='softmax')) # added softmax here, check if suitable?
     model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])

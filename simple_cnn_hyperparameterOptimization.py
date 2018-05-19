@@ -14,19 +14,13 @@ from keras.callbacks import Callback, EarlyStopping, ReduceLROnPlateau, TensorBo
 from keras.utils import np_utils
 ## Sklearn ##
 from sklearn.model_selection import TimeSeriesSplit
-## Hyperas ##
-from hyperas.distributions import uniform
+
 ## Hyperopt ##
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
-## Datasets ##
-from keras.datasets import mnist
 
-## Matplotlib ##
-from matplotlib import pyplot as plt
 
 import numpy as np
 import sys
-import os
 import math
 
 from keras.wrappers.scikit_learn import KerasRegressor
@@ -43,21 +37,6 @@ trainLabels = np.load('/home/isabelle/Documents/Education/Masters/Fourth_year/Q4
 
 n_classes = len(set(trainLabels)) #4251
 
-#############################################################
-######################## Mnist data ###########################
-#############################################################
-#(X_train, y_train), (X_test, y_test) = mnist.load_data()
-## reshape the data from  (n, width, height) to (n, depth, width, height).
-#X_train = X_train.reshape(X_train.shape[0], 1, 28, 28)
-#X_test = X_test.reshape(X_test.shape[0], 1, 28, 28)
-## convert data to float32 and normalize our data values to range [0,1]
-#X_train = X_train.astype('float32')
-#X_test = X_test.astype('float32')
-#X_train /= 255
-#X_test /= 255
-## Convert 1-dimensional class arrays to 10-dimensional class matrices
-#Y_train = np_utils.to_categorical(y_train, 10)
-#Y_test = np_utils.to_categorical(y_test, 10)
 
 ############################################################
 ###### Create the folds for cross-validation ###############
@@ -129,11 +108,11 @@ def gen_model(params):
         
     def getModel():
         #build_fn should construct, compile and return a Keras model, which will then be used to fit/predict
-        model.compile(loss='mean_squared_error', optimizer=params['optimizer']) #, metrics='mean_squared_error'
+        model.compile(loss='categorical_crossentropy', optimizer=params['optimizer']) #, metrics='mean_squared_error'
         return model
     estimator = KerasRegressor(build_fn=getModel,epochs= int(params['nb_epochs']), batch_size= int(params['batch_size']), verbose = 1 )
     results = cross_val_score(estimator, trainData, trainLabels, cv=tscv, fit_params={'callbacks': [reduce_lr]})
-    mean_cv_score = results.mean()
+    mean_cv_score = results.mean() ##### NEEDS TO BE FIXED!!! CATEGORICAL CROSS ENTROPY MEAN?!
     if math.isnan(mean_cv_score):
         mean_cv_score = 100000
     print('Mean cross-validation score', mean_cv_score)

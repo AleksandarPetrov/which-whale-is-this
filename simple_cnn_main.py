@@ -78,7 +78,7 @@ training_generator = DataGenerator(partition['train'], imageName_ID_dict, **para
 validation_generator = DataGenerator(partition['validation'], imageName_ID_dict, **params)
 
 # Network parameters
-conv_param = zeros((2,2))
+conv_param = zeros((2,2)) # what exactly are those?
 dense_param = zeros((1,1))
 in_shape = (250,500,1)
         
@@ -109,6 +109,7 @@ modelz.save('../DATA/simpleCNN.h5')
 # Plot the training and validation loss and accuracies
 
 #  "Accuracy"
+plt.figure()
 plt.plot(history.history['acc'])
 plt.plot(history.history['val_acc'])
 plt.title('model accuracy')
@@ -117,6 +118,7 @@ plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
 plt.show()
 # "Loss"
+plt.figure()
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('model loss')

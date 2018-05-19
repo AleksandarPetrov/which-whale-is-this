@@ -94,6 +94,7 @@ callbacks_list = [checkpoint]
 modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
 
 modelz.fit_generator(generator = training_generator,
+                     validation_data=validation_generator,
                      use_multiprocessing=True,
                      epochs=3,
                      verbose = 1,

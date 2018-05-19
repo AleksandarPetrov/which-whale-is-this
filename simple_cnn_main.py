@@ -10,10 +10,14 @@ from gen_imageName_dict import gen_imageName_dict
 from simple_cnn import gen_model
 from sklearn.preprocessing import LabelEncoder
 from numpy import zeros
+import numpy as np
 from tf_cnnvis import *
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
+from collections import Counter
 
+TRAIN_TOP_N_WHALES = True
+N = 20
 
 # Some useful directories
 test_dir = '../DATA/test_npy'
@@ -33,9 +37,33 @@ le.fit(list_ids) # whale ids not image ids
 n_classes = len(le.classes_)
 labels_int = list(le.fit_transform(list_ids))
 
-# Parameters for Generator
-partition = gen_imageName_dict(test_dir,train_dir, 0.2)
-imageName_ID_dict = dict(zip(file_names,labels_int))
+if TRAIN_TOP_N_WHALES:
+    # Count
+    whale_counts = Counter(list_ids)
+    whale_counts_most_data = whale_counts.most_common(N) # whale IDs for n most common whales
+    number_images = sum([element[1] for element in whale_counts_most_data])
+    whale_IDs_most_data = [element[0] for element in whale_counts_most_data]# get the whale_Ids only
+
+    # get indexes of these whales in the entire training dataset
+    list_ids_arr = np.array(list_ids)
+    idx_whale_IDs_most_data = []
+    for i in range(len(whale_IDs_most_data)):
+        indexes = np.where(list_ids_arr == whale_IDs_most_data[i])[0]
+        idx_whale_IDs_most_data.extend(list(indexes))
+
+    # find image names corresponding to these whales
+    file_names_sub = [file_names[i] for i in idx_whale_IDs_most_data]
+    labels_int_sub = [labels_int[i] for i in idx_whale_IDs_most_data]
+    #labels_sub = [list_ids[i] for i in idx_whale_IDs_most_data]
+    #labels_sub == whale_IDs_most_data
+
+    # Parameters for Generator
+    partition = gen_imageName_dict(test_dir,train_dir, 0.2, file_names_sub)
+    imageName_ID_dict = dict(zip(file_names_sub, labels_int_sub))
+else:
+    # Parameters for Generator
+    partition = gen_imageName_dict(test_dir,train_dir, 0.2)
+    imageName_ID_dict = dict(zip(file_names,labels_int))
 
 params = {'dim': (250,500),
           'batch_size': 64,

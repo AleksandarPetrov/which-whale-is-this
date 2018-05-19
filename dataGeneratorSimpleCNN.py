@@ -16,7 +16,7 @@ class DataGenerator(keras.utils.Sequence):
         self.dim = dim
         self.batch_size = batch_size
         self.labels = labels # a dictionary
-        self.list_IDs = list_IDs
+        self.list_IDs = list_IDs # this is partition
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.shuffle = shuffle
@@ -32,7 +32,7 @@ class DataGenerator(keras.utils.Sequence):
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
 
         # Find list of IDs
-        list_imageNames_temp = [self.list_IDs[k] for k in indexes] # list of image filenames
+        list_imageNames_temp = [self.list_IDs[k] for k in indexes] # list of image filenames (from partition)
 
         # Generate data
         X, y = self.__data_generation(list_imageNames_temp)

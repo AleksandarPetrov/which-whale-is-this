@@ -24,8 +24,8 @@ def aug_para(rot_deg, width, height, shear, zoom):
         rescale = 1./255, # random rescaling -> multiplies the image by this value
         shear_range = shear, # "Shear angle in counter-clockwise direction in degrees"
         zoom_range = zoom, # random zoom inside picture
-        horizontal_flip = True, # "randomly flipping half of the images horizontally"
-        fill_mode = 'nearest' # strategy used for filling in newly created pixels
+        # horizontal_flip = True, # "randomly flipping half of the images horizontally"
+        fill_mode = 'reflect' # strategy used for filling in newly created pixels
         )
     return a
 
@@ -60,10 +60,22 @@ def img_data_aug(random_max, augmentation_parameters, image_array, augmentation_
     rand_int = random.randint(5, random_max)
     # print(rand_int)
     # generates rand_int images: 
-    i = 1
+    i = 0
     # print(aug_folder_name)
-    for batch in augmentation_parameters.flow(image_array, batch_size = 1,
+    for x in augmentation_parameters.flow(image_array, batch_size = 1,
                           save_to_dir = augmentation_dir, save_prefix = augmentation_name, save_format = 'jpeg'):
+        # print(type(batch))
         i += 1
-        if rand_int > i:
+        if i > rand_int:
             break  # otherwise the generator would loop indefinitely
+
+
+def img_data_aug_array(augmentation_parameters, image_array): 
+    i = 0
+    for x in augmentation_parameters.flow(image_array, batch_size = 1):
+        # print(type(batch))
+        i += 1
+        if i > 1:
+            break  # otherwise the generator would loop indefinitely
+    return x
+    

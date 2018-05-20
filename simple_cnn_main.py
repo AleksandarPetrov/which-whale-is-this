@@ -35,7 +35,6 @@ file_names = [file[:-4] for file in file_names]
 # Label encoder, changes the label names to integers for use in generator
 le = LabelEncoder()
 le.fit(list_ids) # whale ids not image ids
-n_classes = len(le.classes_)
 labels_int = list(le.fit_transform(list_ids))
 
 if TRAIN_TOP_N_WHALES:
@@ -55,16 +54,22 @@ if TRAIN_TOP_N_WHALES:
     # find image names corresponding to these whales
     file_names_sub = [file_names[i] for i in idx_whale_IDs_most_data]
     labels_int_sub = [labels_int[i] for i in idx_whale_IDs_most_data]
+    # should this be refit??
+    labels_int_sub_refit = list(le.fit_transform(labels_int_sub)) # refit it to the N classes
+
+
     #labels_sub = [list_ids[i] for i in idx_whale_IDs_most_data]
     #labels_sub == whale_IDs_most_data
 
     # Parameters for Generator
     partition = gen_imageName_dict(test_dir,train_dir, 0.2, file_names_sub)
-    imageName_ID_dict = dict(zip(file_names_sub, labels_int_sub))
+    imageName_ID_dict = dict(zip(file_names_sub, labels_int_sub_refit))
+    n_classes = N
 else:
     # Parameters for Generator
     partition = gen_imageName_dict(test_dir,train_dir, 0.2)
     imageName_ID_dict = dict(zip(file_names,labels_int))
+    n_classes = len(le.classes_)
 
 params = {'dim': (250,500),
           'batch_size': 32,

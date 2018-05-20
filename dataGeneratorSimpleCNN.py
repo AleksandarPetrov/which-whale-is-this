@@ -54,7 +54,7 @@ class DataGenerator(keras.utils.Sequence):
         # Generate data
         for i, ID in enumerate(list_imageNames_temp):
             # Store sample
-            img = np.load('/FILES/DeepLearningProject/DATA/train_npy/' + ID + '.npy')
+            img = np.load('../DATA/train_npy/' + ID + '.npy')
             img = img[:,:,np.newaxis]
             X[i,] = img
             # Store class

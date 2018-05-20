@@ -192,7 +192,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
 
 
 
-        return X1, X2, keras.utils.to_categorical(y, num_classes=self.n_classes)
+        return [X1, X2], y
 
 
 if __name__ == "__main__":
@@ -221,13 +221,15 @@ if __name__ == "__main__":
     labels = dict(zip(file_name, labels_int))
 
     params = {'dim': (250, 500),
-              'batch_size': 64,
+              'batch_size': 32,
               'n_classes': n_classes,
               'n_channels': 1,
               'shuffle': True}
 
 
-    training_generator = SiameseDataGenerator(partition['train'], labels)
+    training_generator = SiameseDataGenerator(list_IDs = partition['train'],
+                                              labels = labels,
+                                              **params)
 
     # Saving callback
     filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')
@@ -240,7 +242,7 @@ if __name__ == "__main__":
     model.fit_generator(generator=training_generator,
                          use_multiprocessing=True,
                          epochs=3,
-                         verbose=2,
+                         verbose=1,
                          callbacks=callbacks_list)
 
     # Save final

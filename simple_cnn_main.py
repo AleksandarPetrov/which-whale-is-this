@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 
 TRAIN_TOP_N_WHALES = True
 N = 20
+N_EPOCHS = 20
 
 # Some useful directories
 test_dir = '../DATA/test_npy'
@@ -102,7 +103,7 @@ modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
 history = modelz.fit_generator(generator = training_generator,
                      validation_data=validation_generator,
                      use_multiprocessing=True,
-                     epochs= 3,
+                     epochs= N_EPOCHS,
                      verbose = 1,
                      callbacks=callbacks_list)
 

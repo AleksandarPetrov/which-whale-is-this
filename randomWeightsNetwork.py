@@ -29,7 +29,7 @@ from sklearn.model_selection import cross_val_score
 # trainLabels = np.load('/home/isabelle/Documents/Education/Masters/Fourth_year/Q4/Deep_learning/data/trainLabels.npy')
 TRAIN_TOP_N_WHALES = True
 N = 3
-N_EVALUATIONS = 2
+N_EVALUATIONS = 9
 
 
 in_shape = (250,500,1)

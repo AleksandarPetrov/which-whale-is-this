@@ -122,7 +122,8 @@ def basicSiameseGenerator():
 
     optimizer = Adam(0.00006)
     siamese_net.compile(loss="binary_crossentropy",
-                        optimizer=optimizer)
+                        optimizer=optimizer,
+                        metrics=['accuracy'])
 
     return siamese_net
 

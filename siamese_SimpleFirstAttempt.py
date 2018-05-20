@@ -14,7 +14,7 @@ from sklearn.preprocessing import LabelEncoder
 from numpy import zeros
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
-from gen_id_dict import gen_id_dict
+from gen_imageName_dict import gen_imageName_dict as gen_id_dict
 
 
 def W_init(shape, name=None):
@@ -39,50 +39,52 @@ def basicSiameseGenerator():
     # BUILDING THE LEGS OF THE SIAMESE NETWORK
     convnet = Sequential()
 
-    convnet.add(Conv2D(filters=32,
+    convnet.add(Conv2D(filters=16,
                        kernel_size=(16, 16),
                        activation='relu',
                        input_shape=input_shape,
                        kernel_initializer=W_init,
                        kernel_regularizer=l2(2e-4),
-                       use_bias=False)
+                       use_bias=True)
                 )
     convnet.add(MaxPooling2D())
 
-    convnet.add(Conv2D(filters=64,
+    convnet.add(Conv2D(filters=32,
                        kernel_size=(13, 13),
                        activation='relu',
                        kernel_regularizer=l2(2e-4),
                        kernel_initializer=W_init,
-                       bias_initializer=b_init)
+                       bias_initializer=b_init,
+                       use_bias = False)
                 )
     convnet.add(MaxPooling2D())
 
-    convnet.add(Conv2D(filters=128,
+    convnet.add(Conv2D(filters=64,
                        kernel_size=(10, 10),
                        activation='relu',
                        kernel_regularizer=l2(2e-4),
                        kernel_initializer=W_init,
-                       use_bias=False)
+                       use_bias=True)
                 )
     convnet.add(MaxPooling2D())
 
-    convnet.add(Conv2D(filters=128,
+    convnet.add(Conv2D(filters=64,
                        kernel_size=(7, 7),
                        activation='relu',
                        kernel_initializer=W_init,
                        kernel_regularizer=l2(2e-4),
-                       bias_initializer=b_init)
+                       bias_initializer=b_init,
+                       use_bias = False)
                 )
     convnet.add(MaxPooling2D())
 
-    convnet.add(Conv2D(filters=256,
+    convnet.add(Conv2D(filters=128,
                        kernel_size=(4, 4),
                        activation='relu',
                        kernel_initializer=W_init,
                        kernel_regularizer=l2(2e-4),
                        bias_initializer=b_init,
-                       use_bias=False)
+                       use_bias=True)
                 )
 
     convnet.add(Flatten())
@@ -217,7 +219,7 @@ if __name__ == "__main__":
     labels_int = list(le.fit_transform(list_ids))
 
     # Parameters for Generator
-    partition = gen_id_dict(test_dir, train_dir)
+    partition = gen_id_dict(test_dir, train_dir, validation_fraction=0.2)
     labels = dict(zip(file_name, labels_int))
 
     params = {'dim': (250, 500),
@@ -230,6 +232,9 @@ if __name__ == "__main__":
     training_generator = SiameseDataGenerator(list_IDs = partition['train'],
                                               labels = labels,
                                               **params)
+    validation_generator = SiameseDataGenerator(list_IDs = partition['test'],
+                                                labels = labels,
+                                                **params)
 
     # Saving callback
     filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')
@@ -239,12 +244,35 @@ if __name__ == "__main__":
     # Model generation
     model = basicSiameseGenerator()
     model.summary()
-    model.fit_generator(generator=training_generator,
-                         use_multiprocessing=True,
-                         epochs=3,
-                         verbose=1,
-                         callbacks=callbacks_list)
+    history = model.fit_generator(generator=training_generator,
+                                  validation_data = validation_generator,
+                                  use_multiprocessing=True,
+                                  epochs=3,
+                                  verbose=1,
+                                  callbacks=callbacks_list)
 
     # Save final
     model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))
+
+    # Plot the training and validation loss and accuracies
+
+    #  "Accuracy"
+    plt.figure()
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.show()
+    # "Loss"
+    plt.figure()
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.show()
+
 

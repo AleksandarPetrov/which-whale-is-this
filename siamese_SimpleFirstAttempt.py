@@ -17,6 +17,8 @@ from keras.callbacks import ModelCheckpoint
 from gen_imageName_dict import gen_imageName_dict
 from collections import Counter
 import matplotlib.pyplot as plt
+from data_aug import img_data_aug_array, aug_para
+
 
 TRAIN_TOP_N_WHALES = True
 N = 20
@@ -139,6 +141,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
         self.n_classes = n_classes
         self.shuffle = shuffle
         self.on_epoch_end()
+        self.shown = 0
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -177,13 +180,24 @@ class SiameseDataGenerator(keras.utils.Sequence):
             X1[i,] = img
             X1_label = self.labels[ID]
 
-            listOfPicturesOfSameWhale = [k for k in list(self.labels.keys()) if self.labels[k] == X1_label and k!=ID]
+            listOfPicturesOfSameWhale = [k for k in list(self.labels.keys()) if self.labels[k] == X1_label]
             # For the second one take one from the same class is i is even, otherwise one with a different class,
             # also checks if the class is not new_whale and if there is at least one other picture of the same whale
             ###DATA AUGMENTATION SHOULD BE PUT HERE AND A LOT OF THINGS ADJUSTED
-            if i%2==0 and X1_label!=0 and len(listOfPicturesOfSameWhale)>0:
+            if i%2==0 and X1_label!=0:
                 X2_ID = np.random.choice(listOfPicturesOfSameWhale, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
+                # Augment:
+                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
+                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
+                img = img_data_aug_array(augParam, img)
+                #if(self.shown<30):
+                #    plt.imshow(img)
+                #    plt.savefig('foo'+str(self.shown)+'.png')
+                #    self.shown=self.shown+1
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class
@@ -192,6 +206,17 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 listOfPicturesOfDifferentWhales = [k for k in list(self.labels.keys()) if (self.labels[k] != X1_label or self.labels[k]!=0) and k != ID]
                 X2_ID = np.random.choice(listOfPicturesOfDifferentWhales, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
+                # Augment:
+                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
+                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
+                img = img_data_aug_array(augParam, img)
+                #if (self.shown < 30):
+                #    plt.imshow(img)
+                #    plt.savefig('foo'+str(self.shown)+'.png')
+                #    self.shown=self.shown+1
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class

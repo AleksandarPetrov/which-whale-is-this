@@ -25,7 +25,7 @@ def aug_para(rot_deg, width, height, shear, zoom):
         shear_range = shear, # "Shear angle in counter-clockwise direction in degrees"
         zoom_range = zoom, # random zoom inside picture
         # horizontal_flip = True, # "randomly flipping half of the images horizontally"
-        fill_mode = 'reflect' # strategy used for filling in newly created pixels
+        fill_mode = 'nearest' # strategy used for filling in newly created pixels
         )
     return a
 
@@ -70,12 +70,22 @@ def img_data_aug(random_max, augmentation_parameters, image_array, augmentation_
             break  # otherwise the generator would loop indefinitely
 
 
-def img_data_aug_array(augmentation_parameters, image_array): 
+def img_data_aug_array(augmentation_parameters, image_array):
+    if len(image_array.shape) == 2: # if we are working with grayscale images -> shape is 2
+        image_array = image_array.reshape((1,) + image_array.shape + (1,))
+    elif len(image_array.shape) == 3: # if we are working with RGB images -> shape is 3 (because there are 3 channels)
+        image_array = image_array.reshape((1,) + image_array.shape)
+    # elif len(x.shape) == 4: # this is for rank 4 tensor
+    #    return x
+    else:
+        print('Error! The shape of the image is ', len(image_array.shape))
+        sys.exit()
+
     i = 0
     for x in augmentation_parameters.flow(image_array, batch_size = 1):
         # print(type(batch))
         i += 1
         if i > 1:
             break  # otherwise the generator would loop indefinitely
-    return x
+    return np.squeeze(x)
     

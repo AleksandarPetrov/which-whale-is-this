@@ -1,4 +1,5 @@
 import numpy as np
+import keras
 from keras.layers import Input, Conv2D, Lambda, merge, Dense, Flatten, MaxPooling2D
 from keras.models import Model, Sequential
 from keras.regularizers import l2
@@ -6,6 +7,14 @@ from keras import backend as K
 from keras.optimizers import SGD, Adam
 from keras.losses import binary_crossentropy
 import numpy.random as rng
+import sys
+import os
+import glob
+from sklearn.preprocessing import LabelEncoder
+from numpy import zeros
+import pandas as pd
+from keras.callbacks import ModelCheckpoint
+from gen_id_dict import gen_id_dict
 
 
 def W_init(shape, name=None):
@@ -21,7 +30,7 @@ def b_init(shape, name=None):
 
 
 def basicSiameseGenerator():
-    input_shape = (500, 250, 1)
+    input_shape = (250, 500, 1)
 
     test_input = Input(input_shape)  # this is where we feed the image we want to test if is the same as the known image
     known_input = Input(input_shape)  # this is where we feed the known image
@@ -149,21 +158,93 @@ class SiameseDataGenerator(keras.utils.Sequence):
     def __data_generation(self, list_IDs_temp):
         'Generates data containing batch_size samples'  # X : (n_samples, *dim, n_channels)
         # Initialization
-        X = np.empty((self.batch_size, *self.dim, self.n_channels))
+        X1 = np.empty((self.batch_size, *self.dim, self.n_channels))
+        X2 = np.empty((self.batch_size, *self.dim, self.n_channels))
         y = np.empty((self.batch_size), dtype=int)
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
-            # Store sample
-            img = np.load('data/train_npy/' + ID + '.npy')
+            # Store sample 1
+            img = np.load(os.path.join(parent_dir, 'train_npy/' + ID + '.npy'))
             img = img[:, :, np.newaxis]
-            X[i,] = img
-            # Store class
-            y[i] = self.labels[ID]
+            X1[i,] = img
+            X1_label = self.labels[ID]
 
-        return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
+            listOfPicturesOfSameWhale = [k for k in list(self.labels.keys()) if self.labels[k] == X1_label and k!=ID]
+            # For the second one take one from the same class is i is even, otherwise one with a different class,
+            # also checks if the class is not new_whale and if there is at least one other picture of the same whale
+            ###DATA AUGMENTATION SHOULD BE PUT HERE AND A LOT OF THINGS ADJUSTED
+            if i%2==0 and X1_label!=0 and len(listOfPicturesOfSameWhale)>0:
+                X2_ID = np.random.choice(listOfPicturesOfSameWhale, 1)[0]
+                img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
+                img = img[:, :, np.newaxis]
+                X2[i,] = img
+                # Store class
+                y[i] = 1
+            else:
+                listOfPicturesOfDifferentWhales = [k for k in list(self.labels.keys()) if (self.labels[k] != X1_label or self.labels[k]!=0) and k != ID]
+                X2_ID = np.random.choice(listOfPicturesOfDifferentWhales, 1)[0]
+                img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
+                img = img[:, :, np.newaxis]
+                X2[i,] = img
+                # Store class
+                y[i] = 0
+
+
+
+        return [X1, X2], y
 
 
 if __name__ == "__main__":
-    testNet = basicSiameseGenerator()
-    testNet.summary()
+
+    # Some useful directories
+    parent_dir = sys.argv[1]
+    test_dir = os.path.join(parent_dir, 'test_npy')
+    train_dir = os.path.join(parent_dir, 'train_npy')
+    labels_dir = os.path.join(parent_dir, 'train.csv')
+
+    # Reading of labels and corresponding image names
+    classes = pd.read_csv(labels_dir)
+    list_ids = list(classes.Id)
+    file_name = list(classes.Image)
+    n_files = len(file_name)
+    file_name = [file[:-4] for file in file_name]
+
+    # Label encoder, changes the label names to integers for use in generator
+    le = LabelEncoder()
+    le.fit(list_ids)
+    n_classes = len(le.classes_)
+    labels_int = list(le.fit_transform(list_ids))
+
+    # Parameters for Generator
+    partition = gen_id_dict(test_dir, train_dir)
+    labels = dict(zip(file_name, labels_int))
+
+    params = {'dim': (250, 500),
+              'batch_size': 32,
+              'n_classes': n_classes,
+              'n_channels': 1,
+              'shuffle': True}
+
+
+    training_generator = SiameseDataGenerator(list_IDs = partition['train'],
+                                              labels = labels,
+                                              **params)
+
+    # Saving callback
+    filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')
+    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+    callbacks_list = [checkpoint]
+
+    # Model generation
+    model = basicSiameseGenerator()
+    model.summary()
+    model.fit_generator(generator=training_generator,
+                         use_multiprocessing=True,
+                         epochs=3,
+                         verbose=1,
+                         callbacks=callbacks_list)
+
+    # Save final
+    model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))
+

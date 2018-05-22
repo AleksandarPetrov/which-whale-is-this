@@ -88,7 +88,7 @@ else:
 
 
 
-architecture_space = {   'n_conv_layers': hp.uniform('n_conv_layers', 2, 4), # note: max number of MaxPooling2D layers is 7 since 2^8 is 256 and 250 is dimension
+architecture_space = {   'n_conv_layers': 2, # int(hp.uniform('n_conv_layers', 2, 4)) note: max number of MaxPooling2D layers is 7 since 2^8 is 256 and 250 is dimension
             'no_filters_conv': hp.uniform('no_filters_conv', 12, 32),
             'dim_conv_kernel': hp.uniform('dim_conv_kernel', 32, 64),
             'poolSize': hp.uniform('poolSize', .25 ,.5),
@@ -108,6 +108,7 @@ def gen_model(params):
     # print(my_init)
     for i in range(int(params['n_conv_layers'])):
         if i != 0:
+            print(i)
             model.add(Conv2D(int(params['no_filters_conv']), (int(params['dim_conv_kernel']),
                                                               int(params['dim_conv_kernel'])), activation = 'relu'))
         else:
@@ -137,14 +138,14 @@ def gen_model(params):
         image = np.load('../DATA/train_npy/' + ID + '.npy')
         image = np.reshape(image, [1, 250, 500, 1])
         prediction = model.predict_classes(image)
-        print(prediction)
+        # print(prediction)
         predictions.append(prediction)
         id = ids[i]
-        print(id)
+        # print(id)
 
         categorical_label = to_categorical(id, num_classes = n_classes)
         categorical_labels.append(categorical_label)
-        print(categorical_label)
+        # print(categorical_label)
 
 
     predictions_arr = np.array(predictions)

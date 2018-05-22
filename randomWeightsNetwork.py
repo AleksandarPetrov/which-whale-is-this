@@ -88,7 +88,7 @@ else:
 
 
 
-architecture_space = {   'n_conv_layers': 2, # int(hp.uniform('n_conv_layers', 2, 4)) note: max number of MaxPooling2D layers is 7 since 2^8 is 256 and 250 is dimension
+architecture_space = {'n_conv_layers': 2, # hp.uniform('n_conv_layers', 2, 4) note: max number of MaxPooling2D layers is 7 since 2^8 is 256 and 250 is dimension
             'no_filters_conv': hp.uniform('no_filters_conv', 12, 32),
             'dim_conv_kernel': hp.uniform('dim_conv_kernel', 32, 64),
             'poolSize': hp.uniform('poolSize', .25 ,.5),

@@ -231,7 +231,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
 if __name__ == "__main__":
 
     # Some useful directories
-    parent_dir = sys.argv[1]
+    parent_dir = '../DATA/'#sys.argv[1]
     test_dir = os.path.join(parent_dir, 'test_npy')
     train_dir = os.path.join(parent_dir, 'train_npy')
     labels_dir = os.path.join(parent_dir, 'train.csv')
@@ -262,6 +262,7 @@ if __name__ == "__main__":
         for i in range(len(whale_IDs_most_data)):
             indexes = np.where(list_ids_arr == whale_IDs_most_data[i])[0]
             idx_whale_IDs_most_data.extend(list(indexes))
+        idx_whale_IDs_most_data.sort()
 
         # find image names corresponding to these whales
         file_names_sub = [file_names[i] for i in idx_whale_IDs_most_data]

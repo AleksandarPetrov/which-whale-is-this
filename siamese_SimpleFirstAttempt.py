@@ -14,8 +14,14 @@ from sklearn.preprocessing import LabelEncoder
 from numpy import zeros
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
-from gen_id_dict import gen_id_dict
+from gen_imageName_dict import gen_imageName_dict
+from collections import Counter
+import matplotlib.pyplot as plt
+from data_aug import img_data_aug_array, aug_para
 
+
+TRAIN_TOP_N_WHALES = True
+N = 20
 
 def W_init(shape, name=None):
     """Initialize weights as in paper"""
@@ -39,50 +45,52 @@ def basicSiameseGenerator():
     # BUILDING THE LEGS OF THE SIAMESE NETWORK
     convnet = Sequential()
 
-    convnet.add(Conv2D(filters=32,
+    convnet.add(Conv2D(filters=16,
                        kernel_size=(16, 16),
                        activation='relu',
                        input_shape=input_shape,
                        kernel_initializer=W_init,
                        kernel_regularizer=l2(2e-4),
-                       use_bias=False)
+                       use_bias=True)
                 )
     convnet.add(MaxPooling2D())
 
-    convnet.add(Conv2D(filters=64,
+    convnet.add(Conv2D(filters=32,
                        kernel_size=(13, 13),
                        activation='relu',
                        kernel_regularizer=l2(2e-4),
                        kernel_initializer=W_init,
-                       bias_initializer=b_init)
-                )
-    convnet.add(MaxPooling2D())
-
-    convnet.add(Conv2D(filters=128,
-                       kernel_size=(10, 10),
-                       activation='relu',
-                       kernel_regularizer=l2(2e-4),
-                       kernel_initializer=W_init,
+                       bias_initializer=b_init,
                        use_bias=False)
                 )
     convnet.add(MaxPooling2D())
 
-    convnet.add(Conv2D(filters=128,
-                       kernel_size=(7, 7),
+    convnet.add(Conv2D(filters=32,
+                       kernel_size=(10, 10),
                        activation='relu',
-                       kernel_initializer=W_init,
                        kernel_regularizer=l2(2e-4),
-                       bias_initializer=b_init)
+                       kernel_initializer=W_init,
+                       use_bias=True)
                 )
     convnet.add(MaxPooling2D())
 
-    convnet.add(Conv2D(filters=256,
-                       kernel_size=(4, 4),
+    convnet.add(Conv2D(filters=64,
+                       kernel_size=(7, 7),
                        activation='relu',
                        kernel_initializer=W_init,
                        kernel_regularizer=l2(2e-4),
                        bias_initializer=b_init,
                        use_bias=False)
+                )
+    convnet.add(MaxPooling2D())
+
+    convnet.add(Conv2D(filters=64,
+                       kernel_size=(4, 4),
+                       activation='relu',
+                       kernel_initializer=W_init,
+                       kernel_regularizer=l2(2e-4),
+                       bias_initializer=b_init,
+                       use_bias=True)
                 )
 
     convnet.add(Flatten())
@@ -93,6 +101,7 @@ def basicSiameseGenerator():
                       kernel_initializer=W_init,
                       bias_initializer=b_init)
                 )
+    convnet.summary()
 
     # Add the two inputs to the leg (passing the two inputs through the same network is effectively the same as having
     # two legs with shared weights
@@ -113,7 +122,8 @@ def basicSiameseGenerator():
 
     optimizer = Adam(0.00006)
     siamese_net.compile(loss="binary_crossentropy",
-                        optimizer=optimizer)
+                        optimizer=optimizer,
+                        metrics=['accuracy'])
 
     return siamese_net
 
@@ -132,6 +142,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
         self.n_classes = n_classes
         self.shuffle = shuffle
         self.on_epoch_end()
+        self.shown = 0
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -170,13 +181,24 @@ class SiameseDataGenerator(keras.utils.Sequence):
             X1[i,] = img
             X1_label = self.labels[ID]
 
-            listOfPicturesOfSameWhale = [k for k in list(self.labels.keys()) if self.labels[k] == X1_label and k!=ID]
+            listOfPicturesOfSameWhale = [k for k in list(self.labels.keys()) if self.labels[k] == X1_label]
             # For the second one take one from the same class is i is even, otherwise one with a different class,
             # also checks if the class is not new_whale and if there is at least one other picture of the same whale
             ###DATA AUGMENTATION SHOULD BE PUT HERE AND A LOT OF THINGS ADJUSTED
-            if i%2==0 and X1_label!=0 and len(listOfPicturesOfSameWhale)>0:
+            if i%2==0 and X1_label!=0:
                 X2_ID = np.random.choice(listOfPicturesOfSameWhale, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
+                # Augment:
+                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
+                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
+                img = img_data_aug_array(augParam, img)
+                #if(self.shown<30):
+                #    plt.imshow(img)
+                #    plt.savefig('foo'+str(self.shown)+'.png')
+                #    self.shown=self.shown+1
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class
@@ -185,6 +207,17 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 listOfPicturesOfDifferentWhales = [k for k in list(self.labels.keys()) if (self.labels[k] != X1_label or self.labels[k]!=0) and k != ID]
                 X2_ID = np.random.choice(listOfPicturesOfDifferentWhales, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
+                # Augment:
+                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
+                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
+                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
+                img = img_data_aug_array(augParam, img)
+                #if (self.shown < 30):
+                #    plt.imshow(img)
+                #    plt.savefig('foo'+str(self.shown)+'.png')
+                #    self.shown=self.shown+1
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class
@@ -206,9 +239,9 @@ if __name__ == "__main__":
     # Reading of labels and corresponding image names
     classes = pd.read_csv(labels_dir)
     list_ids = list(classes.Id)
-    file_name = list(classes.Image)
-    n_files = len(file_name)
-    file_name = [file[:-4] for file in file_name]
+    file_names = list(classes.Image)
+    n_files = len(file_names)
+    file_names = [file[:-4] for file in file_names]
 
     # Label encoder, changes the label names to integers for use in generator
     le = LabelEncoder()
@@ -216,9 +249,42 @@ if __name__ == "__main__":
     n_classes = len(le.classes_)
     labels_int = list(le.fit_transform(list_ids))
 
-    # Parameters for Generator
-    partition = gen_id_dict(test_dir, train_dir)
-    labels = dict(zip(file_name, labels_int))
+    if TRAIN_TOP_N_WHALES:
+        # Count
+        whale_counts = Counter(list_ids)
+        whale_counts_most_data = whale_counts.most_common(N)  # whale IDs for n most common whales
+        number_images = sum([element[1] for element in whale_counts_most_data])
+        whale_IDs_most_data = [element[0] for element in whale_counts_most_data]  # get the whale_Ids only
+
+        # get indexes of these whales in the entire training dataset
+        list_ids_arr = np.array(list_ids)
+        idx_whale_IDs_most_data = []
+        for i in range(len(whale_IDs_most_data)):
+            indexes = np.where(list_ids_arr == whale_IDs_most_data[i])[0]
+            idx_whale_IDs_most_data.extend(list(indexes))
+
+        # find image names corresponding to these whales
+        file_names_sub = [file_names[i] for i in idx_whale_IDs_most_data]
+        labels_int_sub = [labels_int[i] for i in idx_whale_IDs_most_data]
+        # should this be refit??
+        labels_int_sub_refit = list(le.fit_transform(labels_int_sub))  # refit it to the N classes
+
+        # labels_sub = [list_ids[i] for i in idx_whale_IDs_most_data]
+        # labels_sub == whale_IDs_most_data
+
+        # Parameters for Generator
+        partition = gen_imageName_dict(test_dir, train_dir, 0.2, file_names_sub)
+        imageName_ID_dict = dict(zip(file_names_sub, labels_int_sub_refit))
+        n_classes = N
+    else:
+        # Parameters for Generator
+        partition = gen_imageName_dict(test_dir, train_dir, 0.2)
+        imageName_ID_dict = dict(zip(file_names, labels_int))
+        n_classes = len(le.classes_)
+
+    # Parameters for Generator [OLD, BEFORE THE TRAIN TOP WHALES]
+    #partition = gen_imageName_dict(test_dir, train_dir, validation_fraction=0.2)
+    #labels = dict(zip(file_names, labels_int))
 
     params = {'dim': (250, 500),
               'batch_size': 32,
@@ -228,8 +294,11 @@ if __name__ == "__main__":
 
 
     training_generator = SiameseDataGenerator(list_IDs = partition['train'],
-                                              labels = labels,
+                                              labels = imageName_ID_dict,
                                               **params)
+    validation_generator = SiameseDataGenerator(list_IDs = partition['validation'],
+                                                labels = imageName_ID_dict,
+                                                **params)
 
     # Saving callback
     filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')
@@ -239,12 +308,35 @@ if __name__ == "__main__":
     # Model generation
     model = basicSiameseGenerator()
     model.summary()
-    model.fit_generator(generator=training_generator,
-                         use_multiprocessing=True,
-                         epochs=3,
-                         verbose=1,
-                         callbacks=callbacks_list)
+    history = model.fit_generator(generator=training_generator,
+                                  validation_data = validation_generator,
+                                  use_multiprocessing=True,
+                                  epochs=3,
+                                  verbose=1,
+                                  callbacks=callbacks_list)
 
     # Save final
     model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))
+
+    # Plot the training and validation loss and accuracies
+
+    #  "Accuracy"
+    plt.figure()
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.show()
+    # "Loss"
+    plt.figure()
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.show()
+
 

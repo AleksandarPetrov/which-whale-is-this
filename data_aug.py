@@ -24,7 +24,7 @@ def aug_para(rot_deg, width, height, shear, zoom):
         rescale = 1./255, # random rescaling -> multiplies the image by this value
         shear_range = shear, # "Shear angle in counter-clockwise direction in degrees"
         zoom_range = zoom, # random zoom inside picture
-        horizontal_flip = True, # "randomly flipping half of the images horizontally"
+        # horizontal_flip = True, # "randomly flipping half of the images horizontally"
         fill_mode = 'nearest' # strategy used for filling in newly created pixels
         )
     return a
@@ -60,10 +60,32 @@ def img_data_aug(random_max, augmentation_parameters, image_array, augmentation_
     rand_int = random.randint(5, random_max)
     # print(rand_int)
     # generates rand_int images: 
-    i = 1
+    i = 0
     # print(aug_folder_name)
-    for batch in augmentation_parameters.flow(image_array, batch_size = 1,
+    for x in augmentation_parameters.flow(image_array, batch_size = 1,
                           save_to_dir = augmentation_dir, save_prefix = augmentation_name, save_format = 'jpeg'):
+        # print(type(batch))
         i += 1
-        if rand_int > i:
+        if i > rand_int:
             break  # otherwise the generator would loop indefinitely
+
+
+def img_data_aug_array(augmentation_parameters, image_array):
+    if len(image_array.shape) == 2: # if we are working with grayscale images -> shape is 2
+        image_array = image_array.reshape((1,) + image_array.shape + (1,))
+    elif len(image_array.shape) == 3: # if we are working with RGB images -> shape is 3 (because there are 3 channels)
+        image_array = image_array.reshape((1,) + image_array.shape)
+    # elif len(x.shape) == 4: # this is for rank 4 tensor
+    #    return x
+    else:
+        print('Error! The shape of the image is ', len(image_array.shape))
+        sys.exit()
+
+    i = 0
+    for x in augmentation_parameters.flow(image_array, batch_size = 1):
+        # print(type(batch))
+        i += 1
+        if i > 1:
+            break  # otherwise the generator would loop indefinitely
+    return np.squeeze(x)
+    

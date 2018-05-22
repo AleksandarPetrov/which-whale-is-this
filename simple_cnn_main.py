@@ -99,6 +99,7 @@ callbacks_list = [checkpoint]
 
 # Model generation
 modelz = gen_model(conv_param,dense_param,in_shape,n_classes)
+modelz.summary()
 
 history = modelz.fit_generator(generator = training_generator,
                      validation_data=validation_generator,

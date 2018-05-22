@@ -22,6 +22,8 @@ from data_aug import img_data_aug_array, aug_para
 
 TRAIN_TOP_N_WHALES = True
 N = 20
+N_EPOCHS = 15
+LOAD_WEIGHTS = True
 
 def W_init(shape, name=None):
     """Initialize weights as in paper"""
@@ -312,7 +314,7 @@ if __name__ == "__main__":
     history = model.fit_generator(generator=training_generator,
                                   validation_data = validation_generator,
                                   use_multiprocessing=True,
-                                  epochs=3,
+                                  epochs= N_EPOCHS,
                                   verbose=1,
                                   callbacks=callbacks_list)
 

@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 TRAIN_TOP_N_WHALES = True
 N = 20
-N_EPOCHS = 30
+N_EPOCHS = 20
 
 # Some useful directories
 test_dir = '../DATA/test_npy'
@@ -41,7 +41,8 @@ labels_int = list(le.fit_transform(list_ids))
 if TRAIN_TOP_N_WHALES:
     # Count
     whale_counts = Counter(list_ids)
-    whale_counts_most_data = whale_counts.most_common(N) # whale IDs for n most common whales
+    whale_counts_most_data = whale_counts.most_common(N + 1) # whale IDs for n most common whales
+    whale_counts_most_data = whale_counts_most_data[1:]
     number_images = sum([element[1] for element in whale_counts_most_data])
     whale_IDs_most_data = [element[0] for element in whale_counts_most_data]# get the whale_Ids only
 
@@ -52,6 +53,7 @@ if TRAIN_TOP_N_WHALES:
         indexes = np.where(list_ids_arr == whale_IDs_most_data[i])[0]
         idx_whale_IDs_most_data.extend(list(indexes))
 
+    idx_whale_IDs_most_data.sort() # the culprit?!
     # find image names corresponding to these whales
     file_names_sub = [file_names[i] for i in idx_whale_IDs_most_data]
     labels_int_sub = [labels_int[i] for i in idx_whale_IDs_most_data]
@@ -65,6 +67,7 @@ if TRAIN_TOP_N_WHALES:
     # Parameters for Generator
     partition = gen_imageName_dict(test_dir,train_dir, 0.2, file_names_sub)
     imageName_ID_dict = dict(zip(file_names_sub, labels_int_sub_refit))
+    # imageName_ID_dict = dict(zip(file_names, labels_int))
     n_classes = N
 else:
     # Parameters for Generator
@@ -82,6 +85,11 @@ print(params['batch_size'])
 # Generator
 training_generator = DataGenerator(partition['train'], imageName_ID_dict, **params)
 validation_generator = DataGenerator(partition['validation'], imageName_ID_dict, **params)
+
+# (X,y) = validation_generator.__getitem__(0)
+# (X,y) = training_generator.__getitem__(0)
+
+
 
 # Network parameters
 conv_param = zeros((2,2)) # what exactly are those?
@@ -111,6 +119,10 @@ history = modelz.fit_generator(generator = training_generator,
 
 # Save final
 modelz.save('../DATA/simpleCNN.h5')
+
+# (X,y) = validation_generator.__getitem__(0)
+#
+# pred = modelz.predict(X,y)
 
 
 # Plot the training and validation loss and accuracies

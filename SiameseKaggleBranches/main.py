@@ -1,7 +1,7 @@
 import numpy as np
 import keras
 from keras.layers import Input, Conv2D, Lambda, merge, Dense, Flatten, MaxPooling2D
-from keras.models import Model, Sequential
+from keras.models import Model, Sequential, load_model
 from keras.regularizers import l2
 from keras import backend as K
 from keras.optimizers import SGD, Adam
@@ -43,6 +43,10 @@ def basicSiameseGenerator():
     test_input = Input(input_shape)  # this is where we feed the image we want to test if is the same as the known image
     known_input = Input(input_shape)  # this is where we feed the known image
     # It doesn't matter which is which, the network is completely symmetrical
+
+    # Load kaggle model
+    kaggleModel = load_model(os.path.join(parent_dir, 'keras_model.h5'))
+    kaggleModel.summary()
 
     # BUILDING THE LEGS OF THE SIAMESE NETWORK
     convnet = Sequential()

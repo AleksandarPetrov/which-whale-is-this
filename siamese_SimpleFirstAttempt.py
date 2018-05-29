@@ -22,7 +22,7 @@ from data_aug import img_data_aug_array, aug_para
 
 TRAIN_TOP_N_WHALES = True
 N = 20
-N_EPOCHS = 15
+N_EPOCHS = 10
 LOAD_WEIGHTS = True
 
 def W_init(shape, name=None):

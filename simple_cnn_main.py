@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 TRAIN_TOP_N_WHALES = True
 N = 20
-N_EPOCHS = 20
+N_EPOCHS = 10
 
 # Some useful directories
 test_dir = '../DATA/test_npy'

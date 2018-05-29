@@ -17,6 +17,8 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.model_selection import train_test_split
 
 from subprocess import check_output
+from my_classesnfunc import LabelOneHotEncoder,ImportImage
+
 
 import keras
 from keras.models import Sequential
@@ -30,41 +32,22 @@ train_images = glob(".\\input\\train\\*jpg")
 test_images = glob(".\\input\\test\\*jpg")
 df = pd.read_csv(".\\input\\train.csv")
 
+SIZE = 64
+
 df["Image"] = df["Image"].map( lambda x : ".\\input\\train\\"+x)
 ImageToLabelDict = dict( zip( df["Image"], df["Id"]))
 
-
-SIZE = 64
-#image are imported with a resizing and a black and white conversion
-def ImportImage( filename):
-    img = Image.open(filename).convert("LA").resize( (SIZE,SIZE))
-    return np.array(img)[:,:,0]
-train_img = np.array([ImportImage( img) for img in train_images])
+train_img = np.array([ImportImage( img, SIZE) for img in train_images])
 x = train_img
 
 print( "%d training images" %x.shape[0])
-
 print( "Nbr of samples/class\tNbr of classes")
 for index, val in df["Id"].value_counts().value_counts().sort_index().iteritems():
     print( "%d\t\t\t%d" %(index,val))
     
-class LabelOneHotEncoder():
-    def __init__(self):
-        self.ohe = OneHotEncoder()
-        self.le = LabelEncoder()
-    def fit_transform(self, x):
-        features = self.le.fit_transform( x)
-        return self.ohe.fit_transform( features.reshape(-1,1))
-    def transform( self, x):
-        return self.ohe.transform( self.la.transform( x.reshape(-1,1)))
-    def inverse_tranform( self, x):
-        return self.le.inverse_transform( self.ohe.inverse_tranform( x))
-    def inverse_labels( self, x):
-        return self.le.inverse_transform( x)
-
 y = list(map(ImageToLabelDict.get, train_images))
 lohe = LabelOneHotEncoder()
-y_cat = lohe.fit_transform(y)
+y_cat = lohe.fit_transform(y) #this is the the onhot encoding
 
 #constructing class weights
 WeightFunction = lambda x : 1./x**0.75

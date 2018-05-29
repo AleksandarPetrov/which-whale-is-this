@@ -233,7 +233,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
 if __name__ == "__main__":
 
     # Some useful directories
-    parent_dir = '../DATA/'#sys.argv[1]
+    parent_dir = '../../DATA/'#sys.argv[1]
     test_dir = os.path.join(parent_dir, 'test_npy')
     train_dir = os.path.join(parent_dir, 'train_npy')
     labels_dir = os.path.join(parent_dir, 'train.csv')

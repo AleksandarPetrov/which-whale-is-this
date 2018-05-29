@@ -22,9 +22,9 @@ N = 20
 N_EPOCHS = 10
 
 # Some useful directories
-test_dir = '../DATA/test_npy'
-train_dir = '../DATA/train_npy'
-labels_dir = '../DATA/train.csv'
+test_dir = '../../DATA/test_npy'
+train_dir = '../../DATA/train_npy'
+labels_dir = '../../DATA/train.csv'
 
 # Reading of labels and corresponding image names
 classes = pd.read_csv(labels_dir)

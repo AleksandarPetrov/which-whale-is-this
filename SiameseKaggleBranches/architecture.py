@@ -34,68 +34,22 @@ def b_init(shape, name=None):
 
 
 def basicSiameseGenerator(parent_dir):
-    input_shape = (250, 500, 1)
+    input_shape = (64, 64, 1)
 
     test_input = Input(input_shape)  # this is where we feed the image we want to test if is the same as the known image
     known_input = Input(input_shape)  # this is where we feed the known image
     # It doesn't matter which is which, the network is completely symmetrical
 
-    # Load kaggle model
+    # Load kaggle model and drop the last layer
     kaggleModel = load_model(os.path.join(parent_dir, 'keras_model.h5'))
-    kaggleModel.summary()
+    kaggleModel.pop() # remove the last layer
+    kaggleModel.trainable = False # fix the weights
+    print("Kaggle network (without output layer):")
+    kaggleModel.summary() #print the architecture
 
     # BUILDING THE LEGS OF THE SIAMESE NETWORK
     convnet = Sequential()
-
-    convnet.add(Conv2D(filters=16,
-                       kernel_size=(16, 16),
-                       activation='relu',
-                       input_shape=input_shape,
-                       kernel_initializer=W_init,
-                       kernel_regularizer=l2(2e-4),
-                       use_bias=True)
-                )
-    convnet.add(MaxPooling2D())
-
-    convnet.add(Conv2D(filters=32,
-                       kernel_size=(13, 13),
-                       activation='relu',
-                       kernel_regularizer=l2(2e-4),
-                       kernel_initializer=W_init,
-                       bias_initializer=b_init,
-                       use_bias=False)
-                )
-    convnet.add(MaxPooling2D())
-
-    convnet.add(Conv2D(filters=32,
-                       kernel_size=(10, 10),
-                       activation='relu',
-                       kernel_regularizer=l2(2e-4),
-                       kernel_initializer=W_init,
-                       use_bias=True)
-                )
-    convnet.add(MaxPooling2D())
-
-    convnet.add(Conv2D(filters=64,
-                       kernel_size=(7, 7),
-                       activation='relu',
-                       kernel_initializer=W_init,
-                       kernel_regularizer=l2(2e-4),
-                       bias_initializer=b_init,
-                       use_bias=False)
-                )
-    convnet.add(MaxPooling2D())
-
-    convnet.add(Conv2D(filters=64,
-                       kernel_size=(4, 4),
-                       activation='relu',
-                       kernel_initializer=W_init,
-                       kernel_regularizer=l2(2e-4),
-                       bias_initializer=b_init,
-                       use_bias=True)
-                )
-
-    convnet.add(Flatten())
+    convnet.add(kaggleModel)
 
     convnet.add(Dense(units=4096,
                       activation="sigmoid",
@@ -103,6 +57,7 @@ def basicSiameseGenerator(parent_dir):
                       kernel_initializer=W_init,
                       bias_initializer=b_init)
                 )
+    print("Single Siamese branch:")
     convnet.summary()
 
     # Add the two inputs to the leg (passing the two inputs through the same network is effectively the same as having
@@ -126,5 +81,8 @@ def basicSiameseGenerator(parent_dir):
     siamese_net.compile(loss="binary_crossentropy",
                         optimizer=optimizer,
                         metrics=['accuracy'])
+
+    print("Full Siamese network:")
+    siamese_net.summary()
 
     return siamese_net

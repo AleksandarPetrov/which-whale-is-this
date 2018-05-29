@@ -110,7 +110,6 @@ if __name__ == "__main__":
 
     # Model generation
     model = basicSiameseGenerator(parent_dir = parent_dir)
-    model.summary()
     history = model.fit_generator(generator=training_generator,
                                   validation_data = validation_generator,
                                   use_multiprocessing=True,

@@ -28,12 +28,12 @@ LOAD_WEIGHTS = True
 
 
 # Some useful directories
-parent_dir = './DATA/'#sys.argv[1]
+parent_dir = './../../DATA/'#sys.argv[1]
 test_dir = os.path.join(parent_dir, 'test_npy')
 train_dir = os.path.join(parent_dir, 'train_npy')
 labels_dir = os.path.join(parent_dir, 'train.csv')
 
-dataset = h5py.File('tr_gr_64.h5', 'r')
+dataset = h5py.File(os.path.join(parent_dir, 'tr_gr_64.h5'), 'r')
 X_dataset = np.array(dataset['x'])
 y_labels = np.array(dataset['y'])
 y_labels = y_labels.astype('str')

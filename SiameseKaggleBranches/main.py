@@ -1,4 +1,6 @@
 import numpy as np
+import keras
+import tensorflow as tf
 from keras.layers import Input, Conv2D, Lambda, merge, Dense, Flatten, MaxPooling2D
 from keras.models import Model, Sequential, load_model
 from keras.regularizers import l2
@@ -24,19 +26,18 @@ N_EPOCHS = 15
 LOAD_WEIGHTS = True
 
 
-if __name__ == "__main__":
 
-    # Some useful directories
-    parent_dir = './DATA/'#sys.argv[1]
-    test_dir = os.path.join(parent_dir, 'test_npy')
-    train_dir = os.path.join(parent_dir, 'train_npy')
-    labels_dir = os.path.join(parent_dir, 'train.csv')
-    
-    dataset = h5py.File('tr_gr_64.h5', 'r')
-    X_dataset = np.array(dataset['x'])
-    y_labels = np.array(dataset['y'])
-    y_labels = y_labels.astype('str')
-    # Reading of labels and corresponding image names
+# Some useful directories
+parent_dir = './DATA/'#sys.argv[1]
+test_dir = os.path.join(parent_dir, 'test_npy')
+train_dir = os.path.join(parent_dir, 'train_npy')
+labels_dir = os.path.join(parent_dir, 'train.csv')
+
+dataset = h5py.File('tr_gr_64.h5', 'r')
+X_dataset = np.array(dataset['x'])
+y_labels = np.array(dataset['y'])
+y_labels = y_labels.astype('str')
+# Reading of labels and corresponding image names
 #    classes = pd.read_csv(labels_dir)
 #    list_ids = list(classes.Id)
 #    file_names = list(classes.Image)
@@ -93,45 +94,39 @@ if __name__ == "__main__":
 #              'n_channels': 1,
 #              'shuffle': True}
 
+training_generator = SiameseDataGenerator(parent_dir,X_dataset,y_labels)
 
-    training_generator = SiameseDataGenerator(parent_dir,X_dataset,y_labels)
+# Saving callback
+filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+callbacks_list = [checkpoint]
 
+# Model generation
+model = basicSiameseGenerator(parent_dir = parent_dir)
+history = model.fit_generator(generator=training_generator,use_multiprocessing=True,epochs= N_EPOCHS,verbose=1)
 
-    # Saving callback
-    filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')
-    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
-    callbacks_list = [checkpoint]
+# Save final
+model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))
 
-    # Model generation
-    model = basicSiameseGenerator(parent_dir = parent_dir)
-    history = model.fit_generator(generator=training_generator,
-                                  use_multiprocessing=False,
-                                  epochs= N_EPOCHS,
-                                  verbose=1,
-                                  callbacks=callbacks_list)
+# Plot the training and validation loss and accuracies
 
-    # Save final
-    model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))
-
-    # Plot the training and validation loss and accuracies
-
-    #  "Accuracy"
-    plt.figure()
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
-    # "Loss"
-    plt.figure()
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
+#  "Accuracy"
+plt.figure()
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+plt.show()
+# "Loss"
+plt.figure()
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+plt.show()
 
 

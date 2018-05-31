@@ -27,7 +27,7 @@ if TRAIN_TOP_N_WHALES:
 
 N_EPOCHS = int(input('input number of epochs: '))
 
-lr = float(input('learning rate'))
+lr = float(input('learning rate: '))
 LOAD_WEIGHTS = True
 
 def W_init(shape, name=None):
@@ -185,7 +185,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
             # Store sample 1
             img = np.load(os.path.join(parent_dir, 'train_npy/' + ID + '.npy'))
             img = img[:, :, np.newaxis]
-            X1[i,] = img
+            X1[i,] = img/255.
             X1_label = self.labels[ID]
 
             listOfPicturesOfSameWhale = [k for k in list(self.labels.keys()) if self.labels[k] == X1_label]

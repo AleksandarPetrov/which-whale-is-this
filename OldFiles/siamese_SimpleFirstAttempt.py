@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 
 
-TRAIN_TOP_N_WHALES = True
+TRAIN_TOP_N_WHALES = False
 N = 20
 N_EPOCHS = 10
 LOAD_WEIGHTS = True
@@ -233,7 +233,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
 if __name__ == "__main__":
 
     # Some useful directories
-    parent_dir = '../DATA/'#sys.argv[1]
+    parent_dir = './../../DATA/'#sys.argv[1]
     test_dir = os.path.join(parent_dir, 'test_npy')
     train_dir = os.path.join(parent_dir, 'train_npy')
     labels_dir = os.path.join(parent_dir, 'train.csv')
@@ -312,7 +312,6 @@ if __name__ == "__main__":
     model = basicSiameseGenerator()
     model.summary()
     history = model.fit_generator(generator=training_generator,
-                                  validation_data = validation_generator,
                                   use_multiprocessing=True,
                                   epochs= N_EPOCHS,
                                   verbose=1,

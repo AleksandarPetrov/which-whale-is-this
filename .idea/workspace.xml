@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="25c8cd0e-51c0-4ea3-93f3-4c7bc96108c2" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/SiameseKaggleBranches/dataGeneratorV2.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SiameseKaggleBranches/architecture.py" afterPath="$PROJECT_DIR$/SiameseKaggleBranches/architecture.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SiameseKaggleBranches/main.py" afterPath="$PROJECT_DIR$/SiameseKaggleBranches/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/OldFiles/siamese_SimpleFirstAttempt.py" afterPath="$PROJECT_DIR$/OldFiles/siamese_SimpleFirstAttempt.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -20,11 +17,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="104" column="70" lean-forward="false" selection-start-line="104" selection-start-column="70" selection-end-line="104" selection-end-column="70" />
+            <state relative-caret-position="1350">
+              <caret line="90" column="33" lean-forward="true" selection-start-line="90" selection-start-column="33" selection-end-line="90" selection-end-column="33" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -35,7 +32,7 @@
       <file leaf-file-name="architecture.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/architecture.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
+            <state relative-caret-position="820">
               <caret line="66" column="41" lean-forward="false" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
@@ -44,10 +41,44 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="simple_cnn.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OldFiles/simple_cnn.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="simple_cnn_main.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OldFiles/simple_cnn_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="45" selection-end-column="75" />
+              <folding>
+                <element signature="e#121#169#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="siamese_SimpleFirstAttempt.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/OldFiles/siamese_SimpleFirstAttempt.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="24" column="13" lean-forward="true" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="dataGenerator.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/dataGenerator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-315">
+            <state relative-caret-position="-1035">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
@@ -93,9 +124,9 @@
         <option value="$PROJECT_DIR$/Siamese/SiameseDataGenerator.py" />
         <option value="$PROJECT_DIR$/SiameseKaggleBranches/SiameseDataGenerator.py" />
         <option value="$PROJECT_DIR$/SiameseKaggleBranches/dataGeneratorV2.py" />
-        <option value="$PROJECT_DIR$/OldFiles/siamese_SimpleFirstAttempt.py" />
         <option value="$PROJECT_DIR$/SiameseKaggleBranches/architecture.py" />
         <option value="$PROJECT_DIR$/SiameseKaggleBranches/main.py" />
+        <option value="$PROJECT_DIR$/OldFiles/siamese_SimpleFirstAttempt.py" />
       </list>
     </option>
   </component>
@@ -144,20 +175,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="TripletKaggleBranches" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DL_project" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DL_project" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Simple_CNN" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -434,7 +451,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.49439347" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3781855" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3781855" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -458,7 +475,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/siamese_SimpleFirstAttempt.py" />
     <entry file="file://$PROJECT_DIR$/dataGeneratorSimpleCNN.py" />
     <entry file="file://$PROJECT_DIR$/simple_cnn.py" />
     <entry file="file://$PROJECT_DIR$/randomWeightsNetwork.py" />
@@ -499,13 +515,6 @@
     <entry file="file://$PROJECT_DIR$/simple_cnn_main.py" />
     <entry file="file://$PROJECT_DIR$/Siamese/SiameseDataGenerator.py" />
     <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/SiameseDataGenerator.py" />
-    <entry file="file://$PROJECT_DIR$/OldFiles/siamese_SimpleFirstAttempt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="133" column="30" lean-forward="true" selection-start-line="133" selection-start-column="30" selection-end-line="133" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/OldFiles/dataGeneratorSimpleCNN.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -527,13 +536,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/OldFiles/simple_cnn_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="38" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/dataGeneratorV2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1230">
@@ -550,9 +552,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1350">
+          <caret line="90" column="33" lean-forward="true" selection-start-line="90" selection-start-column="33" selection-end-line="90" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/dataGenerator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-315">
+        <state relative-caret-position="-1035">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -562,7 +574,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/architecture.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
+        <state relative-caret-position="820">
           <caret line="66" column="41" lean-forward="false" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
@@ -570,10 +582,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SiameseKaggleBranches/main.py">
+    <entry file="file://$PROJECT_DIR$/OldFiles/simple_cnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="104" column="70" lean-forward="false" selection-start-line="104" selection-start-column="70" selection-end-line="104" selection-end-column="70" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OldFiles/simple_cnn_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="45" selection-end-column="75" />
+          <folding>
+            <element signature="e#121#169#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OldFiles/siamese_SimpleFirstAttempt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="13" lean-forward="true" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

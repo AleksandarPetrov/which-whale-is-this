@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 
 
-TRAIN_TOP_N_WHALES = False
-N = 20
-N_EPOCHS = 10
+TRAIN_TOP_N_WHALES = True
+N = 10
+N_EPOCHS = 20
 LOAD_WEIGHTS = True
 
 def W_init(shape, name=None):
@@ -254,7 +254,8 @@ if __name__ == "__main__":
     if TRAIN_TOP_N_WHALES:
         # Count
         whale_counts = Counter(list_ids)
-        whale_counts_most_data = whale_counts.most_common(N)  # whale IDs for n most common whales
+        whale_counts_most_data = whale_counts.most_common(N + 1)  # whale IDs for n most common whales
+        whale_counts_most_data = whale_counts_most_data[1:]
         number_images = sum([element[1] for element in whale_counts_most_data])
         whale_IDs_most_data = [element[0] for element in whale_counts_most_data]  # get the whale_Ids only
 

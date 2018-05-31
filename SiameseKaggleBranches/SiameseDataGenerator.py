@@ -1,3 +1,56 @@
+
+
+## load the data
+
+# tr_gr_64.h5
+import h5py
+import keras
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+from numpy import zeros
+import numpy as np
+import pandas as pd
+from keras.callbacks import ModelCheckpoint
+from collections import Counter
+import matplotlib.pyplot as plt
+
+# Some useful directories
+test_dir = '../../DATA/test_npy'
+train_dir = '../../DATA/train_npy'
+labels_dir = '../../DATA/train.csv'
+
+####### h5 ##############################
+filename = '../../DATA/tr_gr_64.h5'
+data = h5py.File(filename, 'r')
+
+#  images, imageNames, imageLabels
+X = data['x'] # get first x_value X.value[0]
+y = data['y'] # labels
+
+# Reading of labels and corresponding image names
+classes = pd.read_csv(labels_dir)
+list_ids = list(classes.Id) # whale ids not image ids
+file_names = list(classes.Image)
+n_files = len(file_names)
+file_names = [file[:-4] for file in file_names]
+
+# Label encoder, changes the label names to integers for use in generator
+le = LabelEncoder()
+le.fit(list_ids) # whale ids not image ids
+labels_int = list(le.fit_transform(list_ids))
+#print(y.value)
+print(file_names)
+
+dict_ID_imageNames = {}
+for i,filename in enumerate(file_names):
+    if filename in dict_ID_imageNames.keys():
+        print(i)
+        dict_ID_imageNames[list_ids[i]].append(filename)
+    else:
+        dict_ID_imageNames[list_ids[i]] = filename
+print(len(dict_ID_imageNames['new_whale']))
+
+
 class SiameseDataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
 
@@ -39,8 +92,9 @@ class SiameseDataGenerator(keras.utils.Sequence):
     def __data_generation(self, list_IDs_temp):
         'Generates data containing batch_size samples'  # X : (n_samples, *dim, n_channels)
         # Initialization
-        X1 = np.empty((self.batch_size, *self.dim, self.n_channels))
-        X2 = np.empty((self.batch_size, *self.dim, self.n_channels))
+        X1 = np.empty((self.batch_size, *self.dim, self.n_channels)) # Anchor
+        X2 = np.empty((self.batch_size, *self.dim, self.n_channels)) # Positive
+        X3 = np.empty((self.batch_size, *self.dim, self.n_channels)) # Negative
         y = np.empty((self.batch_size), dtype=int)
 
         # Generate data

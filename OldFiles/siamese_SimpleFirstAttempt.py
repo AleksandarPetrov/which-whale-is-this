@@ -20,9 +20,14 @@ import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 
 
-TRAIN_TOP_N_WHALES = True
-N = 10
-N_EPOCHS = 20
+TRAIN_TOP_N_WHALES = bool(input('all whales: True or False '))
+
+if TRAIN_TOP_N_WHALES:
+    N = int(input('Enter number of whales: '))
+
+N_EPOCHS = int(input('input number of epochs: '))
+
+lr = float(input('learning rate'))
 LOAD_WEIGHTS = True
 
 def W_init(shape, name=None):
@@ -122,7 +127,7 @@ def basicSiameseGenerator():
 
     siamese_net = Model(inputs=[test_input, known_input], outputs=prediction)
 
-    optimizer = Adam(0.006)
+    optimizer = Adam(lr)
     siamese_net.compile(loss="binary_crossentropy",
                         optimizer=optimizer,
                         metrics=['accuracy'])

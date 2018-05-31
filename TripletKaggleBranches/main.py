@@ -17,6 +17,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 from dataGenerator import SiameseDataGenerator
+# from dataGeneratorV2 import SiameseDataGeneratorV2
 from architecture import basicSiameseGenerator
 import h5py
 
@@ -102,7 +103,7 @@ checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_o
 callbacks_list = [checkpoint]
 
 # Model generation
-model = basicSiameseGenerator(parent_dir = parent_dir,trainable = True)
+model = basicSiameseGenerator(parent_dir = parent_dir)
 history = model.fit_generator(generator = training_generator,use_multiprocessing=True,epochs= N_EPOCHS,verbose=1)
 
 # Save final

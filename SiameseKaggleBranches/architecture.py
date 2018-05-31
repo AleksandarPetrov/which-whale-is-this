@@ -21,6 +21,10 @@ import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 
 
+# margin for the triplet loss
+margin = 1.0
+
+
 def W_init(shape, name=None):
     """Initialize weights as in paper"""
     values = rng.normal(loc=0, scale=1e-2, size=shape)
@@ -36,8 +40,9 @@ def b_init(shape, name=None):
 def basicSiameseGenerator(parent_dir):
     input_shape = (64, 64, 1)
 
-    test_input = Input(input_shape)  # this is where we feed the image we want to test if is the same as the known image
-    known_input = Input(input_shape)  # this is where we feed the known image
+    anchor_input = Input(input_shape)  # this is where we feed the image we want to test if is the same as the known image
+    positive_input = Input(input_shape)  # this is where we feed the known image
+    negative_input = Input(input_shape)
     # It doesn't matter which is which, the network is completely symmetrical
 
     # Load kaggle model and drop the last layer
@@ -57,13 +62,26 @@ def basicSiameseGenerator(parent_dir):
     convnet.summary()
 
     # Add the two inputs to the leg (passing the two inputs through the same network is effectively the same as having
-    # two legs with shared weights
-    encoded_test = convnet(test_input)
-    encoded_known = convnet(known_input)
+    # three legs with shared weights
+
+    # encoded_test = convnet(test_input)
+    # encoded_known = convnet(known_input)
+
+    anchor_output = convnet(anchor_input)
+    positive_output = convnet(positive_input)
+    negative_output = convnet(negative_input)
+
+    def compute_triplet_loss(anchor_output,positive_output,negative_output):
+        d_pos = tf.reduce_sum(tf.square(anchor_output - positive_output), 1)
+        d_neg = tf.reduce_sum(tf.square(anchor_output - positive_output), 1)
+
+        loss = tf.maximum(0., margin + d_pos - d_neg)
+        loss = tf.reduce_mean(loss)
+        return loss
 
     # Get the absolute difference between the two vectors
-    L1_layer = Lambda(lambda tensors: K.abs(tensors[0] - tensors[1]))
-    L1_distance = L1_layer([encoded_test, encoded_known])
+    L1_layer = Lambda(lambda tensors: compute_triplet_loss(tensors[0],tensors[1], tensors[2])) #lambda tensors: K.abs(tensors[0] - tensors[1]
+    L1_distance = L1_layer([anchor_output, positive_output,negative_output])
     
     # Add the final layer that connects all of the  distances on the previous layer to the single output
     prediction = Dense(units=1,

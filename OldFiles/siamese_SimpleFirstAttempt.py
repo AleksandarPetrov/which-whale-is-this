@@ -150,6 +150,11 @@ class SiameseDataGenerator(keras.utils.Sequence):
         self.shuffle = shuffle
         self.on_epoch_end()
         self.shown = 0
+        self.augParam = aug_para(rot_deg= 10,
+                                    width= 0.1,
+                                    height= 0.1,
+                                    shear= 0.1,
+                                    zoom= 0.1,)
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -196,12 +201,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 X2_ID = np.random.choice(listOfPicturesOfSameWhale, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
                 # Augment:
-                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
-                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
-                img = img_data_aug_array(augParam, img)
+                img = img_data_aug_array(self.augParam, img)
                 #if(self.shown<30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')
@@ -215,12 +215,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 X2_ID = np.random.choice(listOfPicturesOfDifferentWhales, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
                 # Augment:
-                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
-                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
-                img = img_data_aug_array(augParam, img)
+                img = img_data_aug_array(self.augParam, img)
                 #if (self.shown < 30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')

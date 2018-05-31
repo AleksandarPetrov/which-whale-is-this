@@ -321,7 +321,7 @@ if __name__ == "__main__":
     history = model.fit_generator(generator=training_generator,
                                   use_multiprocessing=True,
                                   epochs= N_EPOCHS,
-                                  verbose=150)
+                                  verbose=1)
 
     # Save final
     model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))

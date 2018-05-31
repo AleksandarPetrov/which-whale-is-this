@@ -20,10 +20,10 @@ import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 
 
-TRAIN_TOP_N_WHALES = bool(input('top whales: 0 or 1 '))
+TRAIN_TOP_N_WHALES = int(input('top whales: 0 or 1 '))
 print(TRAIN_TOP_N_WHALES)
 print(type(TRAIN_TOP_N_WHALES))
-if TRAIN_TOP_N_WHALES:
+if TRAIN_TOP_N_WHALES == 1:
     N = int(input('Enter number of whales: '))
 
 N_EPOCHS = int(input('input number of epochs: '))

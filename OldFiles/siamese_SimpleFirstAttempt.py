@@ -203,6 +203,8 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
                 # Augment:
                 img = img_data_aug_array(self.augParam, img)
+
+                print(min(min(img)), max(max(img)))
                 #if(self.shown<30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')
@@ -217,6 +219,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
                 # Augment:
                 img = img_data_aug_array(self.augParam, img)
+                print(min(min(img)), max(max(img)))
                 #if (self.shown < 30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')

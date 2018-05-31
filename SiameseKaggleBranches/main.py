@@ -17,6 +17,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 from dataGenerator import SiameseDataGenerator
+from dataGeneratorV2 import SiameseDataGeneratorV2
 from architecture import basicSiameseGenerator
 import h5py
 
@@ -94,7 +95,7 @@ y_labels = y_labels.astype('str')
 #              'n_channels': 1,
 #              'shuffle': True}
 
-training_generator = SiameseDataGenerator(parent_dir,X_dataset,y_labels)
+training_generator = SiameseDataGeneratorV2(parent_dir,X_dataset,y_labels)
 
 # Saving callback
 filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')

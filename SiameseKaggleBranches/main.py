@@ -12,7 +12,7 @@ import os
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
-from gen_imageName_dict import gen_imageName_dict
+# from gen_imageName_dict import gen_imageName_dict
 from collections import Counter
 import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
@@ -95,7 +95,7 @@ y_labels = y_labels.astype('str')
 #              'n_channels': 1,
 #              'shuffle': True}
 
-training_generator = SiameseDataGeneratorV2(parent_dir,X_dataset,y_labels)
+training_generator = SiameseDataGenerator(parent_dir,X_dataset,y_labels)
 
 # Saving callback
 filepath = os.path.join(parent_dir, 'weights.best.basicSiamese.hdf5')
@@ -104,7 +104,7 @@ callbacks_list = [checkpoint]
 
 # Model generation
 model = basicSiameseGenerator(parent_dir = parent_dir)
-history = model.fit_generator(generator=training_generator,use_multiprocessing=True,epochs= N_EPOCHS,verbose=1)
+history = model.fit_generator(generator = training_generator,use_multiprocessing=True,epochs= N_EPOCHS,verbose=1)
 
 # Save final
 model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))

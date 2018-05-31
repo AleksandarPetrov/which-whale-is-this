@@ -73,20 +73,35 @@ def basicSiameseGenerator(parent_dir):
 
     def compute_triplet_loss(anchor_output,positive_output,negative_output):
         d_pos = tf.reduce_sum(tf.square(anchor_output - positive_output), 1)
-        d_neg = tf.reduce_sum(tf.square(anchor_output - positive_output), 1)
+        d_neg = tf.reduce_sum(tf.square(anchor_output - negative_output), 1)
 
-        loss = tf.maximum(0., margin + d_pos - d_neg)
+        _square = Lambda(lambda x: x**2)
+        _squarert = Lambda(lambda x: K.sqrt(x))
+
+        def sum_all(x):
+            _sum = Dense(1, kernel_initializer='ones', bias_initializer='zeros')
+            return _sum(x)
+
+        # Normalize the differences
+        n1 = _squarert(sum_all(_square(d_pos)))
+        n2 = _squarert(sum_all(_square(d_neg)))
+
+        loss = tf.maximum(0., margin + n1 - n2)
         loss = tf.reduce_mean(loss)
         return loss
 
     # Get the absolute difference between the two vectors
     L1_layer = Lambda(lambda tensors: compute_triplet_loss(tensors[0],tensors[1], tensors[2])) #lambda tensors: K.abs(tensors[0] - tensors[1]
     L1_distance = L1_layer([anchor_output, positive_output,negative_output])
-    
+
+
+    # check the outputs of L1_distance
+    # print("here",tf.shape(L1_layer))
+
     # Add the final layer that connects all of the  distances on the previous layer to the single output
     prediction = Dense(units=1,
                        activation='sigmoid')(L1_distance)
-    siamese_net = Model(inputs=[test_input, known_input], outputs=prediction)
+    siamese_net = Model(inputs=[anchor_input, positive_input, negative_input], outputs=prediction)
 
     optimizer = Adam(0.0006)
     siamese_net.compile(loss="binary_crossentropy",
@@ -97,3 +112,8 @@ def basicSiameseGenerator(parent_dir):
     siamese_net.summary()
     
     return siamese_net
+
+
+parent_dir = './../../DATA/'#sys.argv[1]
+
+basicSiameseGenerator(parent_dir)

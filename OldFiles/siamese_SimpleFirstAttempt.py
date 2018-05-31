@@ -26,7 +26,9 @@ print(type(TRAIN_TOP_N_WHALES))
 if TRAIN_TOP_N_WHALES == 1:
     N = int(input('Enter number of whales: '))
 
-N_EPOCHS = int(input('input number of epochs: '))
+N_EPOCHS =  int(input('input number of epochs: '))
+
+
 
 lr = float(input('learning rate: '))
 LOAD_WEIGHTS = True
@@ -204,7 +206,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 # Augment:
                 img = img_data_aug_array(self.augParam, img)
 
-                print(min(min(img)), max(max(img)))
+                # print(min(min(img)), max(max(img)))
                 #if(self.shown<30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')
@@ -219,7 +221,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
                 # Augment:
                 img = img_data_aug_array(self.augParam, img)
-                print(min(min(img)), max(max(img)))
+                # print(min(min(img)), max(max(img)))
                 #if (self.shown < 30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')
@@ -319,8 +321,8 @@ if __name__ == "__main__":
     history = model.fit_generator(generator=training_generator,
                                   use_multiprocessing=True,
                                   epochs= N_EPOCHS,
-                                  verbose=1,
-                                  callbacks=callbacks_list)
+                                  verbose=150,
+                                  callbacks = [callbacks_list])
 
     # Save final
     model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))

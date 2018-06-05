@@ -36,6 +36,7 @@ testFileNames = np.array(testDataset['test_labels']).astype('str')[:, 0]
 # Set up the output dictionary
 guesses = {}
 outputFile = open(os.path.join(args.data, args.output),'w')
+print("Saving output in: " + str(os.path.join(args.data, args.output)))
 outputFile.write("Image, Id")
 
 averageProcessingTime = 0

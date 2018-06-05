@@ -18,11 +18,12 @@ from gen_imageName_dict import gen_imageName_dict
 from collections import Counter
 import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
+from random import random
 
 class SiameseDataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
 
-    def __init__(self, parent_dir,X_dataset,y_labels, batch_size=32, dim=(64, 64), n_channels=1, shuffle=True):
+    def __init__(self, parent_dir,X_dataset,y_labels, batch_size=32, dim=(64, 64), n_channels=1, shuffle=True, stochastic = True):
         'Initialization'
         self.dim = dim
         self.batch_size = batch_size
@@ -38,6 +39,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                             height=0,
                             shear=0,
                             zoom=0)
+        self.stochastic = stochastic
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -62,7 +64,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
         # Initialization
         X1 = np.empty((self.batch_size, *self.dim, self.n_channels))
         X2 = np.empty((self.batch_size, *self.dim, self.n_channels))
-        y = np.empty((self.batch_size), dtype=int)
+        y = np.zeros((self.batch_size, 2), dtype=int)
         total_indexes = np.arange(0,np.size(self.y_labels))
         i = 0       
         # Generate data
@@ -72,14 +74,12 @@ class SiameseDataGenerator(keras.utils.Sequence):
             img = self.X_dataset[ind1]
             img = img[:, :, np.newaxis]
             X1[i,] = img
-            
-            # For the second one take one from the same class is i is even, otherwise one with a different class,
-            # also checks if the class is not new_whale and if there is at least one other picture of the same whale
-            ###DATA AUGMENTATION SHOULD BE PUT HERE AND A LOT OF THINGS ADJUSTED
-            if i%2==0:
-                
-                positive_indexes = np.where(self.y_labels == label)
-                positive_indexes = positive_indexes[0]
+
+            positive_indexes = np.where(self.y_labels == label)
+            positive_indexes = positive_indexes[0]
+
+            if (self.stochastic and random() <= 0.5) or (not self.stochastic and i%2==0):
+
                 ind2 = np.random.choice(positive_indexes,size=1)
                 img = self.X_dataset[ind2]
                 
@@ -88,7 +88,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class
-                y[i] = 1
+                y[i, 0] = 1
                 i += 1
             else:
                 negative_indexes = np.delete(total_indexes,positive_indexes)
@@ -100,7 +100,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class
-                y[i] = 0
+                y[i, 1] = 1
                 i += 1
             
         return [X1, X2], y

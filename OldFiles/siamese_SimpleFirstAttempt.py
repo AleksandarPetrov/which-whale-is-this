@@ -20,9 +20,17 @@ import matplotlib.pyplot as plt
 from data_aug import img_data_aug_array, aug_para
 
 
-TRAIN_TOP_N_WHALES = True
-N = 20
-N_EPOCHS = 10
+TRAIN_TOP_N_WHALES = int(input('top whales: 0 or 1 '))
+print(TRAIN_TOP_N_WHALES)
+print(type(TRAIN_TOP_N_WHALES))
+if TRAIN_TOP_N_WHALES == 1:
+    N = int(input('Enter number of whales: '))
+
+N_EPOCHS =  int(input('input number of epochs: '))
+
+
+
+lr = float(input('learning rate: '))
 LOAD_WEIGHTS = True
 
 def W_init(shape, name=None):
@@ -122,7 +130,7 @@ def basicSiameseGenerator():
 
     siamese_net = Model(inputs=[test_input, known_input], outputs=prediction)
 
-    optimizer = Adam(0.00006)
+    optimizer = Adam(lr)
     siamese_net.compile(loss="binary_crossentropy",
                         optimizer=optimizer,
                         metrics=['accuracy'])
@@ -145,6 +153,11 @@ class SiameseDataGenerator(keras.utils.Sequence):
         self.shuffle = shuffle
         self.on_epoch_end()
         self.shown = 0
+        self.augParam = aug_para(rot_deg= 10,
+                                    width= 0.1,
+                                    height= 0.1,
+                                    shear= 0.1,
+                                    zoom= 0.1,)
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -180,7 +193,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
             # Store sample 1
             img = np.load(os.path.join(parent_dir, 'train_npy/' + ID + '.npy'))
             img = img[:, :, np.newaxis]
-            X1[i,] = img
+            X1[i,] = img/255.
             X1_label = self.labels[ID]
 
             listOfPicturesOfSameWhale = [k for k in list(self.labels.keys()) if self.labels[k] == X1_label]
@@ -191,12 +204,9 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 X2_ID = np.random.choice(listOfPicturesOfSameWhale, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
                 # Augment:
-                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
-                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
-                img = img_data_aug_array(augParam, img)
+                img = img_data_aug_array(self.augParam, img)
+
+                # print(min(min(img)), max(max(img)))
                 #if(self.shown<30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')
@@ -210,12 +220,8 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 X2_ID = np.random.choice(listOfPicturesOfDifferentWhales, 1)[0]
                 img = np.load(os.path.join(parent_dir, 'train_npy/' + X2_ID + '.npy'))
                 # Augment:
-                augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
-                                    width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                                    zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))
-                img = img_data_aug_array(augParam, img)
+                img = img_data_aug_array(self.augParam, img)
+                # print(min(min(img)), max(max(img)))
                 #if (self.shown < 30):
                 #    plt.imshow(img)
                 #    plt.savefig('foo'+str(self.shown)+'.png')
@@ -233,7 +239,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
 if __name__ == "__main__":
 
     # Some useful directories
-    parent_dir = '../DATA/'#sys.argv[1]
+    parent_dir = './../../DATA/'#sys.argv[1]
     test_dir = os.path.join(parent_dir, 'test_npy')
     train_dir = os.path.join(parent_dir, 'train_npy')
     labels_dir = os.path.join(parent_dir, 'train.csv')
@@ -254,7 +260,8 @@ if __name__ == "__main__":
     if TRAIN_TOP_N_WHALES:
         # Count
         whale_counts = Counter(list_ids)
-        whale_counts_most_data = whale_counts.most_common(N)  # whale IDs for n most common whales
+        whale_counts_most_data = whale_counts.most_common(N + 1)  # whale IDs for n most common whales
+        whale_counts_most_data = whale_counts_most_data[1:]
         number_images = sum([element[1] for element in whale_counts_most_data])
         whale_IDs_most_data = [element[0] for element in whale_counts_most_data]  # get the whale_Ids only
 
@@ -312,11 +319,9 @@ if __name__ == "__main__":
     model = basicSiameseGenerator()
     model.summary()
     history = model.fit_generator(generator=training_generator,
-                                  validation_data = validation_generator,
                                   use_multiprocessing=True,
                                   epochs= N_EPOCHS,
-                                  verbose=1,
-                                  callbacks=callbacks_list)
+                                  verbose=1)
 
     # Save final
     model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))

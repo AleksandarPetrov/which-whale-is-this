@@ -30,16 +30,12 @@ testDataset = h5py.File(os.path.join(args.data, 'tst_gr_64.h5'), 'r')
 trainX = np.array(trainDataset['x'])
 trainY = np.array(trainDataset['y']).astype('str')
 testX = np.array(testDataset['test_data'])[:10]
-testFileNames = np.array(testDataset['test_labels']).astype('str')[:, 0][:10]
-
-print(testFileNames)
+testFileNames = np.array(testDataset['test_labels']).astype('str')[:, 0]
 
 # Set up the output dictionary
 guesses = {}
 outputFile = open(os.path.join(args.data, 'KaggleTestPredictions.txt'),'w')
 outputFile.write("Image, Id")
-
-print(testX.shape)
 
 averageProcessingTime = 0
 i = 0

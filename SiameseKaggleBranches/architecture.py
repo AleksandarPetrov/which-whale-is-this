@@ -55,13 +55,13 @@ def basicSiameseGenerator(parent_dir,trainable):
     convnet = Sequential()
     convnet.add(kaggleModel)
 
-    convnet.add(Dense(units=4096,
-                      activation="sigmoid",
-                      kernel_regularizer=l2(1e-3),
-                      kernel_initializer=W_init,
-                      bias_initializer=b_init,
-                      trainable=True)
-                )
+    # convnet.add(Dense(units=4096,
+    #                   activation="sigmoid",
+    #                   kernel_regularizer=l2(1e-3),
+    #                   kernel_initializer=W_init,
+    #                   bias_initializer=b_init,
+    #                   trainable=True)
+    #             )
     print("Single Siamese branch:")
     convnet.summary()
 
@@ -75,14 +75,16 @@ def basicSiameseGenerator(parent_dir,trainable):
     L1_distance = L1_layer([encoded_test, encoded_known])
     
     # Add the final layer that connects all of the  distances on the previous layer to the single output
-    prediction = Dense(units=1,
-                       activation='sigmoid')(L1_distance)
+    prediction = Dense(units=2,
+                       activation='softmax',
+                       kernel_initializer = W_init,
+                       trainable = True)(L1_distance)
     siamese_net = Model(inputs=[test_input, known_input], outputs=prediction)
 
-    optimizer = Adam(0.0006)
+    optimizer = Adam(0.00006)
     siamese_net.compile(loss="binary_crossentropy",
                         optimizer=optimizer,
-                        metrics=['accuracy'])
+                        metrics=['categorical_accuracy'])
 
     print("Full Siamese network:")
     siamese_net.summary()

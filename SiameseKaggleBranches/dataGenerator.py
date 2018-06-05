@@ -33,11 +33,11 @@ class SiameseDataGenerator(keras.utils.Sequence):
         self.X_dataset = X_dataset
         self.y_labels = np.array(y_labels)
         self.indexes = np.arange(0,np.size(y_labels,0))
-        self.augParam = aug_para(rot_deg=min(10, max(-10, np.random.normal(loc=0.0, scale=5))),
-                            width=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                            height=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                            shear=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))),
-                            zoom=min(0.1, max(-0.1, np.random.normal(loc=0.0, scale=0.05))))  
+        self.augParam = aug_para(rot_deg=45,
+                            width=0,
+                            height=0,
+                            shear=0,
+                            zoom=0)
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -84,7 +84,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 img = self.X_dataset[ind2]
                 
                 # Augment:
-                img = img_data_aug_array(self.augParam, img)
+                img = img_data_aug_array(self.augParam, img[0, :, :])
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class
@@ -96,7 +96,7 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 img = self.X_dataset[ind2]
     
                 # Augment:
-                img = img_data_aug_array(self.augParam, img)
+                img = img_data_aug_array(self.augParam, img[0, :, :])
                 img = img[:, :, np.newaxis]
                 X2[i,] = img
                 # Store class
@@ -104,4 +104,10 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 i += 1
             
 
+        print("X1 shape")
+        print(X1.shape)
+        print("X2 shape")
+        print(X2.shape)
+        print("y shape")
+        print(y.shape)
         return [X1, X2], y

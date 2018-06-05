@@ -110,7 +110,6 @@ model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))
 
 # Plot the training and validation loss and accuracies
 
-#  "Accuracy"
 plt.figure()
 plt.plot(history.history['acc'])
 plt.plot(history.history['val_acc'])

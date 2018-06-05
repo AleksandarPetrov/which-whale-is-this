@@ -103,11 +103,4 @@ class SiameseDataGenerator(keras.utils.Sequence):
                 y[i] = 0
                 i += 1
             
-
-        print("X1 shape")
-        print(X1.shape)
-        print("X2 shape")
-        print(X2.shape)
-        print("y shape")
-        print(y.shape)
         return [X1, X2], y

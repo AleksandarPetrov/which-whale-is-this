@@ -54,8 +54,14 @@ def basicSiameseGenerator(parent_dir,trainable):
     # BUILDING THE LEGS OF THE SIAMESE NETWORK
     convnet = Sequential()
     convnet.add(kaggleModel)
-#    convnet.add(Dense(units=4096,
-#                      activation="sigmoid"))
+
+    convnet.add(Dense(units=4096,
+                      activation="sigmoid",
+                      kernel_regularizer=l2(1e-3),
+                      kernel_initializer=W_init,
+                      bias_initializer=b_init,
+                      trainable=True)
+                )
     print("Single Siamese branch:")
     convnet.summary()
 

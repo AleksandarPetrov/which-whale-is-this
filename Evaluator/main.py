@@ -24,14 +24,13 @@ model = keras.models.load_model(args.path)
 model.summary()
 
 # Load the test data
-print(os.path.join(args.data, 'tr_gr_64.h5'))
 trainDataset = h5py.File(os.path.join(args.data, 'tr_gr_64.h5'), 'r')
 testDataset = h5py.File(os.path.join(args.data, 'tst_gr_64.h5'), 'r')
 
 
 trainX = np.array(trainDataset['x'])
 trainY = np.array(trainDataset['y']).astype('str')
-testX = np.array(testDataset['test_data'])[:10]
+testX = np.array(testDataset['test_data'])
 testFileNames = np.array(testDataset['test_labels']).astype('str')[:, 0]
 
 # Set up the output dictionary

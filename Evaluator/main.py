@@ -12,6 +12,8 @@ K.clear_session()
 parser = argparse.ArgumentParser(description='Evaluate a model on the test data and prepare a Kaggle output file')
 parser.add_argument('--path', help= 'paste path to the model file')
 parser.add_argument('--data', help= 'paste path to the data folder')
+parser.add_argument('--output', help= 'name for the output file (in the data folder), defaults to KaggleTestPredictions.txt', default = 'KaggleTestPredictions.txt')
+
 
 args = parser.parse_args()
 
@@ -34,7 +36,7 @@ testFileNames = np.array(testDataset['test_labels']).astype('str')[:, 0]
 
 # Set up the output dictionary
 guesses = {}
-outputFile = open(os.path.join(args.data, 'KaggleTestPredictions.txt'),'w')
+outputFile = open(os.path.join(args.data, args.output),'w')
 outputFile.write("Image, Id")
 
 averageProcessingTime = 0

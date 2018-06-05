@@ -66,6 +66,6 @@ for testImage, testName in zip(testX, testFileNames):
         outputFile.write(" " + label)
 
     averageProcessingTime = (averageProcessingTime*(i-1)+ time.time() - start)/i
-    print(". Search took " + str(time.time() - start) + "s. Remaining time: " + str(int((averageProcessingTime*len(testFileNames)-i)*averageProcessingTime/60 )) + " min.")
+    print(". Search took " + str(int(time.time() - start)) + "s. Remaining time: " + str(int((averageProcessingTime*len(testFileNames)-i)*averageProcessingTime/60 )) + " min.")
 
 outputFile.close()

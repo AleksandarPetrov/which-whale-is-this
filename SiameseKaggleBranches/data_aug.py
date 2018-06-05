@@ -21,7 +21,7 @@ def aug_para(rot_deg, width, height, shear, zoom):
         rotation_range = rot_deg, # random rotation -> from 0 to rotation_range (must be 0-180)
         width_shift_range = width, # random translation with fraction of total image width
         height_shift_range = height, # random translation with fraction of total image height
-        rescale = 1./255, # random rescaling -> multiplies the image by this value
+        #rescale = 1./255, # random rescaling -> multiplies the image by this value
         shear_range = shear, # "Shear angle in counter-clockwise direction in degrees"
         zoom_range = zoom, # random zoom inside picture
         # horizontal_flip = True, # "randomly flipping half of the images horizontally"
@@ -80,6 +80,7 @@ def img_data_aug_array(augmentation_parameters, image_array):
     else:
         print('Error! The shape of the image is ', len(image_array.shape))
         sys.exit()
+
 
     i = 0
     for x in augmentation_parameters.flow(image_array, batch_size = 1):

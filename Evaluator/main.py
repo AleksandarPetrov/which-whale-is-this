@@ -56,7 +56,7 @@ for testImage, testName in zip(testX, testFileNames):
     sortedLabels = trainY[ranks]
     guesses[testName] = []
     for sortedLabel in sortedLabels: #needed as to make sure there are no dublicates
-        if len(guesses[testName]) <4 and sortedLabel not in guesses[testName]:
+        if len(guesses[testName]) < 4 and sortedLabel not in guesses[testName]:
             guesses[testName].append(sortedLabel)
     print("Probably one of ", end='', flush=True)
     print(guesses[testName], end='', flush=True)
@@ -66,6 +66,8 @@ for testImage, testName in zip(testX, testFileNames):
     outputFile.write("new_whale")
     for label in guesses[testName]:
         outputFile.write(" " + label)
+
+    outputFile.flush()
 
     averageProcessingTime = (averageProcessingTime*(i-1)+ time.time() - start)/i
     print(". Search took " + str(int(time.time() - start)) + "s. Remaining time: " + str(int((averageProcessingTime*len(testFileNames)-i)*averageProcessingTime/60 )) + " min.")

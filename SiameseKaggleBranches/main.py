@@ -105,6 +105,7 @@ callbacks_list = [checkpoint]
 model = basicSiameseGenerator(parent_dir = parent_dir,trainable = True)
 history = model.fit_generator(generator = training_generator,use_multiprocessing=True,epochs= N_EPOCHS,verbose=1)
 
+
 # Save final
 model.save(os.path.join(parent_dir, 'weights.final.basicSiamese.hdf5'))
 

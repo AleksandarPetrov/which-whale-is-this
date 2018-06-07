@@ -124,37 +124,7 @@ def basicSiameseGenerator(parent_dir,trainable,alternate = True):
         
         
     model.summary() #print the architecture
+    return model
 
-    # BUILDING THE LEGS OF THE SIAMESE NETWORK
-    convnet = Sequential()
-    convnet.add(model)
-    convnet.add(Dense(units=1000,
-                       activation='sigmoid'))
-    convnet.summary()
-
-    # Add the two inputs to the leg (passing the two inputs through the same network is effectively the same as having
-    # two legs with shared weights
-    encoded_test = convnet(test_input)
-    encoded_known = convnet(known_input)
-
-
-    # Get the absolute difference between the two vectors
-    L1_layer = Lambda(lambda tensors: K.abs(tensors[0] - tensors[1]))
-    L1_distance = L1_layer([encoded_test, encoded_known])
-    
-    # Add the final layer that connects all of the  distances on the previous layer to the single output
-    prediction = Dense(units=2,
-                       activation='softmax')(L1_distance)
-    siamese_net = Model(input=[test_input, known_input], output=prediction)
-
-    optimizer = Adam(0.00008)
-    siamese_net.compile(loss="binary_crossentropy",
-                        optimizer=optimizer,
-                        metrics=['binary_accuracy'])
-
-
-    siamese_net.summary()
-    
-    return siamese_net
 
 

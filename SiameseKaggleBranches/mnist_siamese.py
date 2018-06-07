@@ -54,8 +54,10 @@ def create_pairs(x, digit_indices):
     pairs = []
     labels = []
     n = min([len(digit_indices[d]) for d in range(num_classes)]) - 1
+    print([len(digit_indices[d]) for d in range(num_classes)])
+    print('n',n)
     for d in range(num_classes):
-        for i in range(n):
+        for i in range(n): # perhaps so as to get a balanced set
             z1, z2 = digit_indices[d][i], digit_indices[d][i + 1]
             pairs += [[x[z1], x[z2]]]
             inc = random.randrange(1, num_classes)
@@ -82,7 +84,6 @@ def create_base_network(input_shape):
 def compute_accuracy(y_true, y_pred):
     '''Compute classification accuracy with a fixed threshold on distances.
     '''
-    print('halo isabelle here')
     pred = y_pred.ravel() < 0.5
     return np.mean(pred == y_true)
 
@@ -90,7 +91,6 @@ def compute_accuracy(y_true, y_pred):
 def accuracy(y_true, y_pred):
     '''Compute classification accuracy with a fixed threshold on distances.
     '''
-    print('halo rohan here')
     print(y_true.dtype)
     return K.mean(K.equal(y_true, K.cast(y_pred < 0.5, y_true.dtype)))
 
@@ -105,6 +105,8 @@ input_shape = x_train.shape[1:]
 
 # create training+test positive and negative pairs
 digit_indices = [np.where(y_train == i)[0] for i in range(num_classes)]
+
+print("here",digit_indices)
 tr_pairs, tr_y = create_pairs(x_train, digit_indices)
 
 digit_indices = [np.where(y_test == i)[0] for i in range(num_classes)]

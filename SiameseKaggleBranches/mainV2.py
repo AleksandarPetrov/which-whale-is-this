@@ -61,24 +61,26 @@ def create_pairs(x, digit_indices):
 
     # print(n)
     for d in range(n_classes):
-        try:
 
-            for i in range(len(digit_indices[d])): # perhaps so as to get a balanced set
-                # print(d)
-                z1, z2 = digit_indices[d][i], digit_indices[d][i + 1]
-                pairs += [[x[z1], x[z2]]]
-                # inc = random.randrange(1, n_classes)
-                #
-                # # why are there two chunks here?
-                #
-                # dn = (d + inc) % n_classes
-                # z1, z2 = digit_indices[d][i], digit_indices[dn][i]
-                # print('yo',np.shape([[x[z1], x[z2]]]))  # seems like it is always (1,2,64,64)
-                # # pairs = np.append(pairs , [[x[z1], x[z2]]])
-                # print('deze shape',np.shape(pairs))
-                labels += [[1, 0]]
-        except:
-            continue
+        for i in range(len(digit_indices[d])): # perhaps so as to get a balanced set
+            # print(d)
+            try:
+                z1_same, z2_same = digit_indices[d][i], digit_indices[d][i + 1]
+                inc = random.randrange(1, n_classes)
+                dn = (d + inc) % n_classes
+                z1_opp, z2_opp = digit_indices[d][i], digit_indices[dn][i]
+                print(z1_opp,z2_opp)
+                prod = z1_same*z2_same*z1_opp*z2_same
+                if prod!= 0:
+                    pairs += [[x[z1_same], x[z2_same]]]
+                    pairs += [[x[z1_opp], x[z2_opp]]]
+                    print('a', np.shape([[x[z1_same], x[z2_same]]]))
+                    print('b',np.shape([[x[z1_opp], x[z2_opp]]]))
+                    print(x[z1_same])
+                labels += [1, 0]
+                print('after')
+            except:
+                continue
 
     print(np.shape(labels))
     return np.array(pairs), np.array(labels)
@@ -107,7 +109,7 @@ train_dir = os.path.join(parent_dir, 'train_npy')
 labels_dir = os.path.join(parent_dir, 'train.csv')
 
 dataset = h5py.File(os.path.join(parent_dir, 'tr_gr_64.h5'), 'r')
-X_dataset = np.array(dataset['x'])
+X_dataset = np.array(dataset['x'])/255.
 y_labels = np.array(dataset['y'])
 
 
@@ -204,7 +206,7 @@ tr_pairs = np.reshape(tr_pairs, np.shape(tr_pairs) + (1,) )
 print(np.shape(tr_pairs[:, 1]))
 print(np.shape(tr_y))
 # train
-optimizer = Adam(0.00008)
+optimizer = Adam(0.008)
 model.compile(loss=contrastive_loss, optimizer=optimizer, metrics=[accuracy])
 model.fit([tr_pairs[:, 0], tr_pairs[:, 1]], tr_y,
           batch_size=128,

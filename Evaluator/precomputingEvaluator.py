@@ -114,7 +114,6 @@ for testImage, testName in zip(testXprecomp, testFileNames):
     outputFile.flush()
 
     averageProcessingTime = (averageProcessingTime*(i-1)+ time.time() - start)/i
-    print(averageProcessingTime)
     print(". Search took " + str(int((time.time() - start)*1000)) + "ms. Remaining time: " + str(int((averageProcessingTime*(len(testFileNames)-i))/60)) + " min.")
 
 outputFile.close()

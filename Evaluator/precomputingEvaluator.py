@@ -90,7 +90,7 @@ i = 0
 for testImage, testName in zip(testXprecomp, testFileNames):
     i=i+1
     start = time.time()
-    print("Lookin' up the whale in image " + testName+" [" + str(i).zfill(5) + "/" + str(len(testFileNames)).zfill(5) + " ]. ", end='', flush=True)
+    print("Lookin' up the whale in image " + testName+" [" + str(i).zfill(5) + "/" + str(len(testFileNames)).zfill(5) + "]. ", end='', flush=True)
     # See how similar the new image is to all the images in the train set.
     #predictions = model.predict(x = [np.repeat(testImage[ np.newaxis, :, :, np.newaxis], trainX.shape[0], axis=0), trainX[:, :, :, np.newaxis]])
 

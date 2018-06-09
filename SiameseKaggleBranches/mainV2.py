@@ -43,9 +43,6 @@ def contrastive_loss(y_true, y_pred):
     '''
     #tf.Print(y_pred, tf.shape(y_pred)) #[Note: try to print this]
     margin = accuracy(y_true, y_pred)#1
-    a = K.mean(y_true * K.square(y_pred) +
-                  (1 - y_true) * K.square(K.maximum(margin - y_pred, 0)))
-
     return K.mean(y_true * K.square(y_pred) +
                   (1 - y_true) * K.square(K.maximum(margin - y_pred, 0)))
 
@@ -59,30 +56,22 @@ def create_pairs(x, digit_indices):
     # list_a = [len(digit_indices[d]) for d in range(n_classes)]
     # n = min(list_a) - 1#
 
-    # print(n)
+
     for d in range(n_classes):
 
         for i in range(len(digit_indices[d])): # perhaps so as to get a balanced set
-            # print(d)
             try:
                 z1_same, z2_same = digit_indices[d][i], digit_indices[d][i + 1]
                 inc = random.randrange(1, n_classes)
                 dn = (d + inc) % n_classes
                 z1_opp, z2_opp = digit_indices[d][i], digit_indices[dn][i]
-                print(z1_opp,z2_opp)
                 prod = z1_same*z2_same*z1_opp*z2_same
                 if prod!= 0:
                     pairs += [[x[z1_same], x[z2_same]]]
                     pairs += [[x[z1_opp], x[z2_opp]]]
-                    print('a', np.shape([[x[z1_same], x[z2_same]]]))
-                    print('b',np.shape([[x[z1_opp], x[z2_opp]]]))
-                    print(x[z1_same])
                 labels += [1, 0]
-                print('after')
             except:
                 continue
-
-    print(np.shape(labels))
     return np.array(pairs), np.array(labels)
 
 
@@ -99,7 +88,6 @@ def compute_accuracy(y_true, y_pred):
 def accuracy(y_true, y_pred):
     '''Compute classification accuracy with a fixed threshold on distances.
     '''
-    print(y_true.dtype)
     return K.mean(K.equal(y_true, K.cast(y_pred < 0.5, y_true.dtype)))
 
 # Some useful directories
@@ -170,8 +158,6 @@ y_train = training_generator.y_labels
 
 # create training+test positive and negative pairs
 
-print('a',np.size(le.classes_))
-print('b',np.size(y_train))
 digit_indices = [np.where(y_train == id)[0] for id in le.classes_]
 tr_pairs, tr_y = create_pairs(x_train, digit_indices)
 
@@ -196,15 +182,12 @@ processed_b = base_network(input_b)
 
 distance = Lambda(euclidean_distance,
                   output_shape=eucl_dist_output_shape)([processed_a, processed_b])
-print(K.shape(distance))
-# print(K.eval(distance)([input_a,input_b]))
 
 model = Model([input_a, input_b], distance)
 
 # reshape the tr_pairs
 tr_pairs = np.reshape(tr_pairs, np.shape(tr_pairs) + (1,) )
-print(np.shape(tr_pairs[:, 1]))
-print(np.shape(tr_y))
+
 # train
 optimizer = Adam(0.008)
 model.compile(loss=contrastive_loss, optimizer=optimizer, metrics=[accuracy])

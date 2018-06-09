@@ -1,4 +1,6 @@
 """
+Run with python3 precomputingEvaluator.py --path ../../DATA/weights.Siamese.best.binary_accuracy.training.hdf5
+        --data ../../DATA --output June09_fixedSiamese_KaggleTestPredictions.txt > ../../DATA/June09_fixedSiamese_KaggleTestPredictions.log
 """
 import argparse
 import keras

@@ -9,7 +9,6 @@ import h5py
 import os
 
 def modelEvaluator(params, trainEpochs = 25, parent_dir = './../../DATA/', iterations = 5):
-    print("yo")
     networkPerformanceList = []
 
     for i in range(iterations):
@@ -77,7 +76,6 @@ def legNetwork(params):
             model.add(Conv2D(numberOfFilters, (kernelSize, kernelSize),
                              activation = 'relu',
                              kernel_initializer='random_uniform',
-                             #name="legConvLayer_" + str(i + 1),
                              trainable = False
                              )
                       )
@@ -86,18 +84,17 @@ def legNetwork(params):
                              activation='relu',
                              input_shape=input_shape,
                              kernel_initializer = 'random_uniform',
-                             #name="legConvLayer_" + str(i + 1),
                              trainable=False
                              )
                       )
 
-        model.add(MaxPooling2D(pool_size=(2, 2), strides=None, padding='valid', data_format=None))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=None, padding='valid', data_format="channels_last"))
 
     model.add(Flatten())
     model.add(Dense(1024,activation="sigmoid", name="legOutput"))
     return model
 
-def checkPerformance(network, trainEpochs, parent_dir):
+def checkPerformance(network, trainEpochs = 25, parent_dir = './../../DATA/'):
 
     dataset = h5py.File(os.path.join(parent_dir, 'tr_gr_64.h5'), 'r')
     X_dataset = np.array(dataset['x'])
@@ -129,6 +126,6 @@ def checkPerformance(network, trainEpochs, parent_dir):
                                     validation_data=validation_generator,
                                     use_multiprocessing=True,
                                     epochs=trainEpochs,
-                                    verbose=0)
+                                    verbose=1)
 
     return max(history.history['val_binary_accuracy'])

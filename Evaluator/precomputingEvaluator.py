@@ -19,6 +19,10 @@ parser = argparse.ArgumentParser(description='Evaluate a model on the test data 
 parser.add_argument('--path', help= 'paste path to the model file')
 parser.add_argument('--data', help= 'paste path to the data folder')
 parser.add_argument('--output', help= 'name for the output file (in the data folder), defaults to KaggleTestPredictions.txt', default = 'KaggleTestPredictions.txt')
+parser.add_argument('--layer_input', help= 'name of one of the input layers', default = 'input_1')
+parser.add_argument('--layer_leg', help= 'name of the whole leg layer', default = 'sequential_1')
+parser.add_argument('--layer_dense', help= 'name of one of the dense layer that computes the final output', default = 'dense_3')
+
 
 
 args = parser.parse_args()
@@ -29,13 +33,21 @@ print("Loading the model from " + args.path)
 model = keras.models.load_model(args.path)
 model.summary()
 
+print("Model loaded")
+print("------------------")
+print("Input layer name: " + args.layer_input)
+print("Leg layer name  : " + args.layer_leg)
+print("Dense layer name: " + args.layer_dense)
+print("------------------")
+
+
 #Make the pre-compute model
 precomputeModel = Sequential()
 for layer in model.layers:
-    if layer.name == "input_1":
+    if layer.name == args.layer_input:
         precomputeModel.add(layer)
         print("Input layer added to the precompute network")
-    if layer.name == "sequential_1":
+    if layer.name == args.layer_leg:
         precomputeModel.add(layer)
         print("Sequential layer added to the precompute network")
 print("Precompute network input:  " + str(precomputeModel.input.shape))
@@ -46,7 +58,7 @@ print("------------------")
 
 #Make the comparison model
 for layer in model.layers:
-    if layer.name == "dense_3":
+    if layer.name == args.layer_dense:
         print("Comparison function input:  " + str(layer.input.shape))
         print("Comparison function output: " + str(layer.output.shape))
         newOutputs = layer

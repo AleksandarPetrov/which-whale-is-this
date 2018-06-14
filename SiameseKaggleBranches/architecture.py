@@ -10,15 +10,7 @@ from keras.losses import binary_crossentropy
 import numpy.random as rng
 import sys
 import os
-import glob
-from sklearn.preprocessing import LabelEncoder
-from numpy import zeros
-import pandas as pd
-from keras.callbacks import ModelCheckpoint
-from gen_imageName_dict import gen_imageName_dict
-from collections import Counter
-import matplotlib.pyplot as plt
-from data_aug import img_data_aug_array, aug_para
+from keras import regularizers
 
 def euclidean_distance(vects):
     x, y = vects
@@ -93,15 +85,49 @@ def alternate_network():
     input_shape = (64, 64, 1)
     #build convnet to use in each siamese 'leg'
     convnet = Sequential()
-    convnet.add(Conv2D(64,(7,7),activation='relu',input_shape=input_shape))
+    convnet.add(Conv2D(64,(7,7),
+                       activation='relu',
+                       input_shape=input_shape,
+                       kernel_initializer='random_uniform',
+                       bias_initializer ='random_uniform',
+                       kernel_regularizer=regularizers.l2(0.01),
+                       bias_regularizer=regularizers.l2(0.01),
+
+                       ))
     convnet.add(MaxPooling2D())
-    convnet.add(Conv2D(128,(4,4),activation='relu'))
+    convnet.add(Conv2D(128,(4,4),
+                       activation='relu',
+                       kernel_initializer='random_uniform',
+                       bias_initializer ='random_uniform',
+                       kernel_regularizer=regularizers.l2(0.01),
+                       bias_regularizer=regularizers.l2(0.01),
+                       ))
     convnet.add(MaxPooling2D())
-    convnet.add(Conv2D(128,(4,4),activation='relu'))
+    convnet.add(Conv2D(128,(4,4),
+                       activation='relu',
+                       kernel_initializer='random_uniform',
+                       bias_initializer ='random_uniform',
+                       kernel_regularizer=regularizers.l2(0.01),
+                       bias_regularizer=regularizers.l2(0.01),
+                       ))
     convnet.add(MaxPooling2D())
-    convnet.add(Conv2D(256,(2,2),activation='relu'))
+    convnet.add(Conv2D(256,(2,2),
+                       activation='relu',
+                       kernel_initializer='random_uniform',
+                       bias_initializer ='random_uniform',
+                       kernel_regularizer=regularizers.l2(0.01),
+                       bias_regularizer=regularizers.l2(0.01),
+                       ))
     convnet.add(Flatten())
-    convnet.add(Dense(4096,activation="sigmoid"))
+    model.add(Dropout(0.1))
+    convnet.add(Dense(512,
+                       activation='relu',
+                       kernel_initializer='random_uniform',
+                       bias_initializer ='random_uniform',
+                       kernel_regularizer=regularizers.l2(0.01),
+                       bias_regularizer=regularizers.l2(0.01),
+                       ))
+    model.add(Dropout(0.20))
     return convnet
 
 def basicSiameseGenerator(parent_dir,trainable,alternate = True):
@@ -128,8 +154,6 @@ def basicSiameseGenerator(parent_dir,trainable,alternate = True):
     # BUILDING THE LEGS OF THE SIAMESE NETWORK
     convnet = Sequential()
     convnet.add(model)
-    convnet.add(Dense(units=1000,
-                       activation='sigmoid'))
     convnet.summary()
 
     # Add the two inputs to the leg (passing the two inputs through the same network is effectively the same as having
@@ -147,7 +171,7 @@ def basicSiameseGenerator(parent_dir,trainable,alternate = True):
                        activation='softmax')(L1_distance)
     siamese_net = Model(input=[test_input, known_input], output=prediction)
 
-    optimizer = Adam(0.00008)
+    optimizer = Adam(0.001)
     siamese_net.compile(loss="binary_crossentropy",
                         optimizer=optimizer,
                         metrics=['binary_accuracy'])

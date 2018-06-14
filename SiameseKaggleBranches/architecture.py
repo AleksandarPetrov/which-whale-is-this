@@ -119,7 +119,7 @@ def alternate_network():
                        bias_regularizer=regularizers.l2(0.01),
                        ))
     convnet.add(Flatten())
-    model.add(Dropout(0.1))
+    convnet.add(Dropout(0.1))
     convnet.add(Dense(512,
                        activation='relu',
                        kernel_initializer='random_uniform',
@@ -127,7 +127,7 @@ def alternate_network():
                        kernel_regularizer=regularizers.l2(0.01),
                        bias_regularizer=regularizers.l2(0.01),
                        ))
-    model.add(Dropout(0.20))
+    convnet.add(Dropout(0.20))
     return convnet
 
 def basicSiameseGenerator(parent_dir,trainable,alternate = True):

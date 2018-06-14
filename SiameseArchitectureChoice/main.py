@@ -13,7 +13,7 @@ trials = Trials()
 best = fmin(fn = modelEvaluator,
             space = architecture_space,
             algo=tpe.suggest,
-            max_evals= 100,
+            max_evals= 10,
             trials=trials) #lambda params: modelEvaluator(params,  trainEpochs = 25, parent_dir = sys.argv[1], iterations = 5)
 print('best: ')
 print(best)

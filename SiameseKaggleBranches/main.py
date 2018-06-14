@@ -8,7 +8,7 @@ from keras import backend as K
 from keras.optimizers import SGD, Adam
 from keras.losses import binary_crossentropy
 import os
-
+import random
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
@@ -19,6 +19,11 @@ from data_aug import img_data_aug_array, aug_para
 from dataGenerator import SiameseDataGenerator
 from architecture import basicSiameseGenerator
 import h5py
+from collections import Counter
+
+from collections import *
+
+
 
 N_EPOCHS = 50
 
@@ -33,7 +38,64 @@ X_dataset = np.array(dataset['x'])
 y_labels = np.array(dataset['y'])
 y_labels = y_labels.astype('str')
 
-training_generator = SiameseDataGenerator(parent_dir,X_dataset,y_labels, stochastic = True)
+
+
+file_path1 = os.path.join(parent_dir,'tr_gr_64.hdf5')
+bool1 = os.path.exists(file_path1)
+if bool1 == False:
+    whale_ids = set(y_labels)
+    random.shuffle(list(whale_ids))
+    whale_ids_list = list(whale_ids)
+    whales_training = whale_ids_list[0::2]
+    idx_training_whales = [i for i, x in enumerate(y_labels) if any(thing in x for thing in whales_training)]
+    X_dataset_training = X_dataset[idx_training_whales]
+    y_labels_training = y_labels[idx_training_whales]
+    print('here')
+    f = h5py.File(file_path1,"w")
+    f.create_dataset('training_data', data = X_dataset_training)
+    asciiList = [n.encode("ascii", "ignore") for n in y_labels_training]
+    f.create_dataset('training_data_labels', (len(asciiList),1),'S10', asciiList)
+    f.close()
+else:
+    dataset = h5py.File(file_path1, 'r')
+    X_dataset_training = np.array(dataset['training_data'])
+    y_labels_training = np.array(dataset['training_data_labels'])
+    y_labels_training = y_labels_training.astype('str')
+
+file_path2 = os.path.join(parent_dir,'val_gr_64.hdf5')
+bool2 = os.path.exists(file_path2)
+if bool2 == False:
+    whale_ids = set(y_labels)
+    random.shuffle(list(whale_ids))
+
+    whale_ids_list = list(whale_ids)
+    whales_validation = whale_ids_list[1::2]
+    print(whales_validation)
+    idx_validation_whales = [i for i, x in enumerate(y_labels) if any(thing in x for thing in whales_validation)]
+    X_dataset_validation = X_dataset[idx_validation_whales]
+    y_labels_validation = y_labels[idx_validation_whales]
+
+    print('there')
+    f = h5py.File(os.path.join(parent_dir,'val_gr_64.hdf5'),"w")
+    f.create_dataset('validation_data', data = X_dataset_validation)
+    asciiList = [n.encode("ascii", "ignore") for n in y_labels_validation]
+    f.create_dataset('validation_data_labels', (len(asciiList),1),'S10', asciiList)
+
+    f.close()
+
+else:
+    dataset = h5py.File(file_path2, 'r')
+    X_dataset_validation = np.array(dataset['validation_data'])
+    y_labels_validation = np.array(dataset['validation_data_labels'])
+    y_labels_validation = y_labels_validation.astype('str')
+
+print(X_dataset_training.shape)
+print(X_dataset.shape)
+print(type(y_labels_training))
+print(type(y_labels))
+
+
+training_generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True)
 
 # Saving callback
 filepath = os.path.join(parent_dir, 'weights.Siamese.best.binary_accuracy.training.hdf5')
@@ -43,8 +105,9 @@ callbacks_list = [checkpoint]
 # Model generation
 model = basicSiameseGenerator(parent_dir = parent_dir,
                               trainable = True)
-history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_dataset,y_labels, stochastic = True),
-                              validation_data = SiameseDataGenerator(parent_dir,X_dataset,y_labels, stochastic = False),
+
+history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True), # change the input datasets to be based on certain number of whales
+                              validation_data = SiameseDataGenerator(parent_dir,X_dataset_validation,y_labels_validation, stochastic = False), # change the input datasets to be based on certain number of whales
                               use_multiprocessing=True,
                               epochs= N_EPOCHS,
                               callbacks = callbacks_list,

@@ -55,7 +55,7 @@ print("Precompute network output: " + str(precomputeModel.output.shape))
 precomputeModel.summary()
 print("------------------")
 
-
+comparisonFunction = K.function([layer.input],[layer.output])
 #Make the comparison model
 for layer in model.layers:
     if layer.name == args.layer_dense:

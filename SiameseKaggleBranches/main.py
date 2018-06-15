@@ -136,7 +136,7 @@ d = {'loss': history.history['loss'], 'acc': history.history['binary_accuracy'],
 df = pd.DataFrame.from_dict(data=d)
 filepath_history = os.path.join(parent_dir,'history_'+st+'.csv')
 
-pd.DataFrame.to_csv(d, filepath_history)
+pd.DataFrame.to_csv(df, filepath_history)
 
 # loss = np.array(history_file['loss'])
 # acc = np.array(history_file['acc'])

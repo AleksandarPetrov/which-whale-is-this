@@ -133,7 +133,7 @@ history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_data
                               verbose=2)
 
 d = {'loss': history.history['loss'], 'acc': history.history['binary_accuracy'], 'val_loss':history.history['val_loss'],'val_acc': history.history['val_binary_accuracy']}
-df = pd.DataFrame(data=d)
+df = pd.DataFrame.from_dict(data=d)
 filepath_history = os.path.join(parent_dir,'history_'+st+'.csv')
 
 pd.DataFrame.to_csv(d, filepath_history)

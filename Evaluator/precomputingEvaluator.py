@@ -21,7 +21,7 @@ parser.add_argument('--data', help= 'paste path to the data folder')
 parser.add_argument('--output', help= 'name for the output file (in the data folder), defaults to KaggleTestPredictions.txt', default = 'KaggleTestPredictions.txt')
 parser.add_argument('--layer_input', help= 'name of one of the input layers', default = 'input_1')
 parser.add_argument('--layer_leg', help= 'name of the whole leg layer', default = 'sequential_1')
-parser.add_argument('--layer_dense', help= 'name of one of the dense layer that computes the final output', default = 'dense_3')
+parser.add_argument('--layer_dense', help= 'name of one of the dense layer that computes the final output', default = 'dense_2')
 
 
 
@@ -55,7 +55,7 @@ print("Precompute network output: " + str(precomputeModel.output.shape))
 precomputeModel.summary()
 print("------------------")
 
-comparisonFunction = K.function([layer.input],[layer.output])
+
 #Make the comparison model
 for layer in model.layers:
     if layer.name == args.layer_dense:

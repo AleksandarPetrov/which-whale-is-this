@@ -23,6 +23,8 @@ from architecture import basicSiameseGenerator
 import h5py
 import datetime
 import time
+import pandas as pd
+import csv
 from collections import Counter
 
 from collections import *
@@ -130,20 +132,20 @@ history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_data
                               callbacks = callbacks_list,
                               verbose=2)
 
+d = {'loss': history.history['loss'], 'acc': history.history['binary_accuracy'], 'val_loss':history.history['val_loss'],'val_acc': history.history['val_binary_accuracy']}
+df = pd.DataFrame(data=d)
+filepath_history = os.path.join(parent_dir,'history_'+st+'.csv')
 
+pd.DataFrame.to_csv(d, filepath_history)
 
-history_file = h5py.File(os.path.join(parent_dir,'history_'+st+'.h5'),'w')
 # loss = np.array(history_file['loss'])
 # acc = np.array(history_file['acc'])
 # val_loss = np.array(history_file['val_loss'])
 # val_acc = np.array(history_file['val_acc'])
 
-history_file.create_dataset('loss', data = history.history['loss'])
-history_file.create_dataset('acc', data = history.history['binary_accuracy'])
-history_file.create_dataset('val_loss', data = history.history['val_loss'])
-history_file.create_dataset('val_acc', data = history.history['val_binary_accuracy'])
 
-history_file.close()
+
+
 
 
 # Save final

@@ -38,6 +38,15 @@ X_dataset = np.array(dataset['x'])
 y_labels = np.array(dataset['y'])
 y_labels = y_labels.astype('str')
 
+# NORMALIZE
+X_dataset_original = X_dataset
+X_dataset_flattened = X_dataset
+X_dataset_flattened.flatten()
+average_value = np.mean(X_dataset_flattened)
+std_dev = np.std(X_dataset_flattened)
+# print(average_value)
+
+X_dataset = (X_dataset - np.ones(np.shape(X_dataset))*average_value)/std_dev
 
 
 file_path1 = os.path.join(parent_dir,'tr_gr_64.hdf5')
@@ -89,14 +98,12 @@ else:
     y_labels_validation = np.array(dataset['validation_data_labels'])
     y_labels_validation = y_labels_validation.astype('str')
 
-print(X_dataset_training.shape)
-print(X_dataset.shape)
-print(type(y_labels_training))
-print(type(y_labels))
+print(X_dataset_training[1])
+
 
 
 training_generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True)
-
+print(training_generator)
 # Saving callback
 filepath = os.path.join(parent_dir, 'weights.Siamese.best.binary_accuracy.training.hdf5')
 checkpoint = ModelCheckpoint(filepath, monitor='val_binary_accuracy', verbose=1, save_best_only=True, mode='max')

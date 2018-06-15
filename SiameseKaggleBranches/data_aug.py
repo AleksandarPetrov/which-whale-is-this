@@ -24,7 +24,7 @@ def aug_para(rot_deg, width, height, shear, zoom):
         #rescale = 1./255, # random rescaling -> multiplies the image by this value
         shear_range = shear, # "Shear angle in counter-clockwise direction in degrees"
         zoom_range = zoom, # random zoom inside picture
-        # horizontal_flip = True, # "randomly flipping half of the images horizontally"
+        horizontal_flip = True, # "randomly flipping half of the images horizontally"
         fill_mode = 'nearest' # strategy used for filling in newly created pixels
         )
     return a

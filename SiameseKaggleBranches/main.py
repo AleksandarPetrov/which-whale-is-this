@@ -12,6 +12,7 @@ import random
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
+from keras.models import load_model
 # from gen_imageName_dict import gen_imageName_dict
 from collections import Counter
 import matplotlib.pyplot as plt
@@ -110,8 +111,11 @@ checkpoint = ModelCheckpoint(filepath, monitor='val_binary_accuracy', verbose=1,
 callbacks_list = [checkpoint]
 
 # Model generation
-model = basicSiameseGenerator(parent_dir = parent_dir,
-                              trainable = True)
+
+# load the weights which give best results for far
+model = load_model(filepath)
+# model = basicSiameseGenerator(parent_dir = parent_dir,
+#                               trainable = True)
 
 history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True), # change the input datasets to be based on certain number of whales
                               validation_data = SiameseDataGenerator(parent_dir,X_dataset_validation,y_labels_validation, stochastic = False), # change the input datasets to be based on certain number of whales

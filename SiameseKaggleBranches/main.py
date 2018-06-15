@@ -32,7 +32,7 @@ from collections import *
 ts = time.time()
 st = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d_%H:%M:%S')
 
-N_EPOCHS = 50
+N_EPOCHS = 200
 
 # Some useful directories
 parent_dir = './../../DATA/'#sys.argv[1]
@@ -110,18 +110,18 @@ print(X_dataset_training[1])
 
 
 training_generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True)
-print(training_generator)
+
+
 # Saving callback
-filepath = os.path.join(parent_dir, 'weights.Siamese.best.binary_accuracy.training.hdf5')
+filepath = os.path.join(parent_dir, st+'weights.Siamese.best.binary_acc.tr.hdf5')
 checkpoint = ModelCheckpoint(filepath, monitor='val_binary_accuracy', verbose=1, save_best_only=True, mode='max')
 callbacks_list = [checkpoint]
 
 # Model generation
 
 # load the weights which give best results for far
-model = load_model(filepath)
-# model = basicSiameseGenerator(parent_dir = parent_dir,
-#                                trainable = True)
+# model = load_model(filepath)
+model = basicSiameseGenerator(parent_dir = parent_dir,trainable = True)
 
 
 
@@ -149,7 +149,7 @@ pd.DataFrame.to_csv(df, filepath_history)
 
 
 # Save final
-model.save(os.path.join(parent_dir, 'weights.Siamese.final.hdf5'))
+model.save(os.path.join(parent_dir, st+'weights.Siamese.final.hdf5'))
 
 # Plot the training and validation loss and accuracies
 try:

@@ -20,11 +20,14 @@ from data_aug import img_data_aug_array, aug_para
 from dataGenerator import SiameseDataGenerator
 from architecture import basicSiameseGenerator
 import h5py
+import datetime
+import time
 from collections import Counter
 
 from collections import *
 
-
+ts = time.time()
+st = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d_%H:%M:%S')
 
 N_EPOCHS = 50
 
@@ -117,6 +120,8 @@ model = load_model(filepath)
 # model = basicSiameseGenerator(parent_dir = parent_dir,
 #                               trainable = True)
 
+
+
 history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True), # change the input datasets to be based on certain number of whales
                               validation_data = SiameseDataGenerator(parent_dir,X_dataset_validation,y_labels_validation, stochastic = False), # change the input datasets to be based on certain number of whales
                               use_multiprocessing=True,
@@ -124,7 +129,11 @@ history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_data
                               callbacks = callbacks_list,
                               verbose=2)
 
+filepath_history = os.path.join(parent_dir,'history_'+st+'.log')
 
+
+with open(filepath_history, 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
 # Save final
 model.save(os.path.join(parent_dir, 'weights.Siamese.final.hdf5'))
 

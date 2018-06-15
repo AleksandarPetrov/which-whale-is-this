@@ -9,6 +9,7 @@ from keras.optimizers import SGD, Adam
 from keras.losses import binary_crossentropy
 import os
 import random
+import pickle
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
@@ -118,7 +119,7 @@ callbacks_list = [checkpoint]
 # load the weights which give best results for far
 model = load_model(filepath)
 # model = basicSiameseGenerator(parent_dir = parent_dir,
-#                               trainable = True)
+#                                trainable = True)
 
 
 

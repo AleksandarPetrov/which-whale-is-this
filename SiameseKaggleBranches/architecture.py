@@ -140,6 +140,7 @@ def basicSiameseGenerator(parent_dir,trainable,alternate = True):
     # Load kaggle model and drop the last layer
     if alternate:
         model = alternate_network()
+
     else:        
         model = load_model(os.path.join(parent_dir, 'keras_model.h5'))
         model.layers.pop() # remove the last layer

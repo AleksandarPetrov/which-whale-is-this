@@ -41,7 +41,7 @@ N = 2 # number of images to augment
 ts = time.time()
 st = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d_%H:%M:%S')
 
-N_EPOCHS = 200
+N_EPOCHS = 25
 
 # Some useful directories
 parent_dir = './../../DATA/'#sys.argv[1]

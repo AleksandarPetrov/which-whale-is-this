@@ -129,9 +129,10 @@ for testImage, testName in zip(testXprecomp, testFileNames):
 
     # Save the predictions
     topNpredictionValues = 1-predictions[ranks[0:NofPredictions],1]
-    bottomNpredictionValues = 1-predictions[ranksWorstToBest[0:NofPredictions],1]
-    outputPredDiffFile.write(', '.join(topNpredictionValues.astype(str)))
-    outputPredDiffFile.write(', ')
+    bottomNpredictionValues = flip(1-predictions[ranksWorstToBest[0:NofPredictions],1])
+    outputPredDiffFile.write('best, ')
+    outputPredDiffFile.write(', '.join(topNpredictionValues.astype(str))+"\n")    
+    outputPredDiffFile.write('worst, ')
     outputPredDiffFile.write(', '.join(bottomNpredictionValues.astype(str))+"\n")
 
     # Save to the output file

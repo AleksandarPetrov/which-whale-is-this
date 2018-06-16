@@ -12,7 +12,7 @@ import random
 import pickle
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.models import load_model
 # from gen_imageName_dict import gen_imageName_dict
 from collections import Counter
@@ -115,7 +115,8 @@ training_generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels
 # Saving callback
 filepath = os.path.join(parent_dir, st+'weights.Siamese.best.binary_acc.tr.hdf5')
 checkpoint = ModelCheckpoint(filepath, monitor='val_binary_accuracy', verbose=1, save_best_only=True, mode='max')
-callbacks_list = [checkpoint]
+early_stopping = EarlyStopping(monitor='val_loss', min_delta=0.05, patience = 15)
+callbacks_list = [checkpoint, early_stopping]
 
 # Model generation
 

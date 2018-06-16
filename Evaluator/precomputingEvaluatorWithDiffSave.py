@@ -68,7 +68,7 @@ for layer in model.layers:
         print("------------------")
 
 # Set up the prediction values file
-NofPredictions = 10
+NofPredictions = 50
 outputPredDiffFile = open(os.path.join(args.data, "predictionDifferences.csv"),'w')
 print("Saving prediction values in: " + str(os.path.join(args.data, "predictionDifferences.csv")))
 print("------------------")
@@ -118,6 +118,7 @@ for testImage, testName in zip(testXprecomp, testFileNames):
 
     # Find the 4 most similar images (based on the SECOND output which is how dissimilar they are. Hence we are looking for the FIRST entries
     ranks = np.argsort(predictions[:,1])
+    ranksWorstToBest = np.argsort(predictions[:,0])
     sortedLabels = trainY[ranks]
     guesses[testName] = []
     for sortedLabel in sortedLabels: #needed as to make sure there are no dublicates
@@ -128,7 +129,10 @@ for testImage, testName in zip(testXprecomp, testFileNames):
 
     # Save the predictions
     topNpredictionValues = 1-predictions[ranks[0:NofPredictions],1]
-    outputPredDiffFile.write(', '.join(topNpredictionValues.astype(str))+"\n")
+    bottomNpredictionValues = 1-predictions[ranksWorstToBest[0:NofPredictions],1]
+    outputPredDiffFile.write(', '.join(topNpredictionValues.astype(str)))
+    outputPredDiffFile.write(', ')
+    outputPredDiffFile.write(', '.join(bottomNpredictionValues.astype(str))+"\n")
 
     # Save to the output file
     outputFile.write("\n"+testName + ",")

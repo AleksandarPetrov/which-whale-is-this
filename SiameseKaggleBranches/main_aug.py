@@ -114,7 +114,7 @@ if augment_data:
             X_dataset = np.vstack((X_dataset, np.reshape(image_augmented, (1, 64, 64))))
             # print('this',y_labels_augmented.shape)
             y_labels = np.hstack((y_labels, current_label))
-            # print('here', X_dataset_augmented.shape)
+            print('here', X_dataset.shape)
 else:
 
     file_path1 = os.path.join(parent_dir, 'tr_gr_64.hdf5')
@@ -173,73 +173,73 @@ print(X_dataset_training[1])
 
 
 
-training_generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True)
-
-
-# Saving callback
-filepath = os.path.join(parent_dir, st+'weights.Siamese.best.binary_acc.tr.hdf5')
-checkpoint = ModelCheckpoint(filepath, monitor='val_binary_accuracy', verbose=1, save_best_only=True, mode='max')
-callbacks_list = [checkpoint]
-
-# Model generation
-
-# load the weights which give best results for far
-# model = load_model(filepath)
-model = basicSiameseGenerator(parent_dir = parent_dir,trainable = True)
-
-
-
-history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True), # change the input datasets to be based on certain number of whales
-                              validation_data = SiameseDataGenerator(parent_dir,X_dataset_validation,y_labels_validation, stochastic = False), # change the input datasets to be based on certain number of whales
-                              use_multiprocessing=True,
-                              epochs= N_EPOCHS,
-                              callbacks = callbacks_list,
-                              verbose=2)
-
-d = {'loss': history.history['loss'], 'acc': history.history['binary_accuracy'], 'val_loss':history.history['val_loss'],'val_acc': history.history['val_binary_accuracy']}
-df = pd.DataFrame.from_dict(data=d)
-
-if checking_effect_amount_data:
-    sub_path = os.path.join(parent_dir,'effect_amount_data/')
-else:
-    sub_path = parent_dir
-filepath_history = os.path.join(sub_path,'history_'+st+'.csv')
-
-pd.DataFrame.to_csv(df, filepath_history)
-
-# loss = np.array(history_file['loss'])
-# acc = np.array(history_file['acc'])
-# val_loss = np.array(history_file['val_loss'])
-# val_acc = np.array(history_file['val_acc'])
-
-
-
-
-
-
-# Save final
-model.save(os.path.join(parent_dir, st+'weights.Siamese.final.hdf5'))
-
-# Plot the training and validation loss and accuracies
-try:
-    plt.figure()
-    plt.plot(history.history['binary_accuracy'])
-    plt.plot(history.history['val_binary_accuracy'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
-    # "Loss"
-    plt.figure()
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
-except:
-    print("Plotting couldn't be done. Probably running on Cloud without graphical interface.")
+# training_generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True)
+#
+#
+# # Saving callback
+# filepath = os.path.join(parent_dir, st+'weights.Siamese.best.binary_acc.tr.hdf5')
+# checkpoint = ModelCheckpoint(filepath, monitor='val_binary_accuracy', verbose=1, save_best_only=True, mode='max')
+# callbacks_list = [checkpoint]
+#
+# # Model generation
+#
+# # load the weights which give best results for far
+# # model = load_model(filepath)
+# model = basicSiameseGenerator(parent_dir = parent_dir,trainable = True)
+#
+#
+#
+# history = model.fit_generator(generator = SiameseDataGenerator(parent_dir,X_dataset_training,y_labels_training, stochastic = True), # change the input datasets to be based on certain number of whales
+#                               validation_data = SiameseDataGenerator(parent_dir,X_dataset_validation,y_labels_validation, stochastic = False), # change the input datasets to be based on certain number of whales
+#                               use_multiprocessing=True,
+#                               epochs= N_EPOCHS,
+#                               callbacks = callbacks_list,
+#                               verbose=2)
+#
+# d = {'loss': history.history['loss'], 'acc': history.history['binary_accuracy'], 'val_loss':history.history['val_loss'],'val_acc': history.history['val_binary_accuracy']}
+# df = pd.DataFrame.from_dict(data=d)
+#
+# if checking_effect_amount_data:
+#     sub_path = os.path.join(parent_dir,'effect_amount_data/')
+# else:
+#     sub_path = parent_dir
+# filepath_history = os.path.join(sub_path,'history_'+st+'.csv')
+#
+# pd.DataFrame.to_csv(df, filepath_history)
+#
+# # loss = np.array(history_file['loss'])
+# # acc = np.array(history_file['acc'])
+# # val_loss = np.array(history_file['val_loss'])
+# # val_acc = np.array(history_file['val_acc'])
+#
+#
+#
+#
+#
+#
+# # Save final
+# model.save(os.path.join(parent_dir, st+'weights.Siamese.final.hdf5'))
+#
+# # Plot the training and validation loss and accuracies
+# try:
+#     plt.figure()
+#     plt.plot(history.history['binary_accuracy'])
+#     plt.plot(history.history['val_binary_accuracy'])
+#     plt.title('model accuracy')
+#     plt.ylabel('accuracy')
+#     plt.xlabel('epoch')
+#     plt.legend(['train', 'validation'], loc='upper left')
+#     plt.show()
+#     # "Loss"
+#     plt.figure()
+#     plt.plot(history.history['loss'])
+#     plt.plot(history.history['val_loss'])
+#     plt.title('model loss')
+#     plt.ylabel('loss')
+#     plt.xlabel('epoch')
+#     plt.legend(['train', 'validation'], loc='upper left')
+#     plt.show()
+# except:
+#     print("Plotting couldn't be done. Probably running on Cloud without graphical interface.")
 
 

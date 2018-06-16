@@ -53,7 +53,7 @@ dataset = h5py.File(os.path.join(parent_dir, 'tr_gr_64.h5'), 'r')
 X_dataset = np.array(dataset['x'])
 y_labels = np.array(dataset['y'])
 y_labels = y_labels.astype('str')
-print(set(y_labels))
+# print(set(y_labels))
 # NORMALIZE
 X_dataset_original = X_dataset
 X_dataset_flattened = X_dataset
@@ -63,12 +63,12 @@ std_dev = np.std(X_dataset_flattened)
 # print(average_value)
 
 X_dataset = (X_dataset - np.ones(np.shape(X_dataset))*average_value)/std_dev
-print(X_dataset.shape)
+# print(X_dataset.shape)
 # Is it okay if aug is done after normalization?
 
 if augment_data:
-    X_dataset_augmented = X_dataset
-    y_labels_augmented = y_labels
+    # X_dataset_augmented = X_dataset
+    # y_labels_augmented = y_labels
     file_path1 = os.path.join(parent_dir, 'augmented_to_' + str(N)+'_tr_gr_64.hdf5')
     file_path2 = os.path.join(parent_dir, 'augmented_to_' + str(N)+'_val_gr_64.hdf5')
 
@@ -111,11 +111,11 @@ if augment_data:
                 print(image_to_augment)
                 image_augmented = img_data_aug_array(augParam, image_to_augment[0, :])
 
-            X_dataset_augmented = np.vstack((X_dataset_augmented, np.reshape(image_augmented, (1, 64, 64))))
+            X_dataset = np.vstack((X_dataset, np.reshape(image_augmented, (1, 64, 64))))
             # print('this',y_labels_augmented.shape)
-            y_labels_augmented = np.hstack((y_labels_augmented, current_label))
+            y_labels = np.hstack((y_labels, current_label))
             # print('here', X_dataset_augmented.shape)
-
+else:
 
     file_path1 = os.path.join(parent_dir, 'tr_gr_64.hdf5')
     file_path2 = os.path.join(parent_dir, 'val_gr_64.hdf5')
